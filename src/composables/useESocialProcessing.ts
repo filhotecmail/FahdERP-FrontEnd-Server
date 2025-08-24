@@ -164,9 +164,7 @@ export function useESocialProcessing(mockData: ProcessingItem[]) {
     alert('Gerando relatório de críticas...')
   }
 
-  const viewXML = (item: ProcessingItem) => {
-    alert(`Visualizando XML do item ${item.id}`)
-  }
+
 
   const retifyData = (item: ProcessingItem) => {
     alert(`Retificando dados do item ${item.id}`)
@@ -268,7 +266,6 @@ export function useESocialProcessing(mockData: ProcessingItem[]) {
     // Funções utilitárias
     processSelectedData,
     generateCriticsReport,
-    viewXML,
     retifyData,
     processItem,
     canRetify,

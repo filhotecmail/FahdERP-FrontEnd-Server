@@ -200,14 +200,7 @@
                 </svg>
                 Grid de Dados
               </button>
-              <button 
-                @click="activeTab = 'xml'" 
-                :class="['tab-button', { active: activeTab === 'xml' }]">
-                <svg class="tab-icon" viewBox="0 0 24 24">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                Visualização XML
-              </button>
+
               <button 
                 @click="activeTab = 'stats'" 
                 :class="['tab-button', { active: activeTab === 'stats' }]">
@@ -257,11 +250,6 @@
                         <td>{{ item.nroReciboExclusao || '' }}</td>
                         <td>
                           <div class="action-buttons">
-                            <button @click="viewXML(item)" class="btn-action" title="Ver XML">
-                              <svg viewBox="0 0 24 24">
-                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                              </svg>
-                            </button>
                             <button v-if="canRetify(item.status)" @click="retifyData(item)" class="btn-action" title="Retificar">
                               <svg viewBox="0 0 24 24">
                                 <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/>
@@ -343,27 +331,7 @@
                 </div>
               </div>
 
-              <!-- Aba 2: Visualização XML -->
-              <div v-show="activeTab === 'xml'" class="tab-panel">
-                <div class="xml-viewer-container">
-                  <div class="xml-header">
-                    <h3 class="xml-title">
-                      <svg class="xml-icon" viewBox="0 0 24 24">
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                      </svg>
-                      Exemplo de XML S-2200 (Admissão de Trabalhador)
-                    </h3>
-                    <div class="xml-info">
-                      <span class="xml-badge">Evento: S-2200</span>
-                      <span class="xml-badge">Versão: S_01_02_00</span>
-                      <span class="xml-badge">Ambiente: Homologação</span>
-                    </div>
-                  </div>
-                  <div class="xml-content">
-                    <pre class="xml-code"><code v-html="formattedXml"></code></pre>
-                  </div>
-                </div>
-              </div>
+
 
               <!-- Aba 3: Estatísticas -->
               <div v-show="activeTab === 'stats'" class="tab-panel">
@@ -407,7 +375,7 @@ import ESocialCardHeading from '../components/ESocialCardHeading.vue'
 import { useESocialFilters } from '../composables/useESocialFilters'
 import { useESocialProcessing } from '../composables/useESocialProcessing'
 import { mockData, type ProcessingItem } from '../mock/esocialProcessingData'
-import { s2200XmlMock, xmlStats, timeSeriesData } from '../mock/s2200XmlMock'
+import { timeSeriesData } from '../mock/s2200XmlMock'
 import { useThemeStore } from '@/stores/theme'
 
 // Registrar componentes do Chart.js
@@ -476,7 +444,6 @@ const {
   // Funções utilitárias
   processSelectedData,
   generateCriticsReport,
-  viewXML,
   retifyData,
   processItem,
   canRetify,
@@ -516,15 +483,7 @@ watch(itemsPerPage, () => {
   currentPage.value = 1
 })
 
-// Formatação do XML
-const formattedXml = computed(() => {
-  return s2200XmlMock
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/(&lt;\/?[^&gt;]+&gt;)/g, '<span class="xml-tag">$1</span>')
-    .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="xml-comment">$1</span>')
-    .replace(/(="[^"]*")/g, '<span class="xml-attribute">$1</span>')
-})
+
 
 // Dados do gráfico
 const chartData = computed(() => ({
@@ -1339,81 +1298,7 @@ onMounted(() => {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estilos do Visualizador XML */
-.xml-viewer-container {
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
 
-.xml-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-}
-
-.xml-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.xml-icon {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
-}
-
-.xml-info {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.xml-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.xml-content {
-  padding: 0;
-  max-height: 600px;
-  overflow: auto;
-}
-
-.xml-code {
-  margin: 0;
-  padding: 1.5rem;
-  background: #1e1e1e;
-  color: #d4d4d4;
-  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.xml-code .xml-tag {
-  color: #569cd6;
-  font-weight: 500;
-}
-
-.xml-code .xml-attribute {
-  color: #9cdcfe;
-}
-
-.xml-code .xml-comment {
-  color: #6a9955;
-  font-style: italic;
-}
 
 /* Estilos das Estatísticas */
 .stats-container {

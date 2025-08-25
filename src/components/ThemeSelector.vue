@@ -148,51 +148,73 @@ onUnmounted(() => {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 4px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin-top: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow: hidden;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
+  min-width: 180px;
 }
 
 .theme-option {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
   width: 100%;
-  padding: 12px;
+  padding: 14px 16px;
   background: transparent;
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   font-size: 0.9rem;
+  font-weight: 500;
   user-select: none;
+  text-align: left;
 }
 
 .theme-option:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--hover-bg);
+  transform: translateX(2px);
 }
 
 .theme-option.selected {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(var(--accent-primary-rgb, 0, 255, 127), 0.1);
   color: var(--accent-primary);
+  border-left: 3px solid var(--accent-primary);
+  padding-left: 13px;
 }
 
 .theme-preview {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   flex-shrink: 0;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-option span {
+  flex: 1;
+  font-weight: 500;
 }
 
 .check-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   color: var(--accent-primary);
-  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+.theme-option.selected .check-icon {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>

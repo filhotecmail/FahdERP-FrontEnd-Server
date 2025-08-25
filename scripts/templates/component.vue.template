@@ -1,0 +1,84 @@
+<template>
+  <div class="{{kebabName}}-container">
+    <!-- {{componentName}} Content -->
+    <div class="{{kebabName}}-content">
+      <h2>{{componentName}}</h2>
+      <p>{{description}}</p>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+// Props interface
+interface Props {
+  // Add your props here
+}
+
+// Props with defaults
+const props = withDefaults(defineProps<Props>(), {
+  // Add default values here
+})
+
+// Emits
+const emit = defineEmits<{
+  // Add your emits here
+  // example: (e: 'update', value: string): void
+}>()
+
+// Reactive state
+const isLoading = ref(false)
+
+// Computed properties
+const computedValue = computed(() => {
+  // Add computed logic here
+  return 'computed value'
+})
+
+// Methods
+const handleAction = () => {
+  // Add method logic here
+  console.log('{{componentName}} action triggered')
+}
+</script>
+
+<style scoped>
+.{{kebabName}}-container {
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.{{kebabName}}-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.{{kebabName}}-content h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.{{kebabName}}-content p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .{{kebabName}}-container {
+    padding: 0.75rem;
+  }
+  
+  .{{kebabName}}-content h2 {
+    font-size: 1.25rem;
+  }
+}
+</style>

@@ -8,7 +8,27 @@
           <span></span>
           <span></span>
         </button>
-        <h1 class="brand-title">Fahd ERP</h1>
+        <div class="brand-container">
+          <div class="brand-logo">
+            <svg viewBox="0 0 40 40" class="logo-icon">
+              <defs>
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00ff7f;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#00cc66;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <!-- Círculo externo -->
+              <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.1" stroke="url(#logoGradient)" stroke-width="2"/>
+              <!-- Forma central moderna -->
+              <path d="M12 8 L28 8 C30 8 32 10 32 12 L32 20 C32 22 30 24 28 24 L20 24 L20 28 C20 30 18 32 16 32 L12 32 C10 32 8 30 8 28 L8 12 C8 10 10 8 12 8 Z" fill="url(#logoGradient)"/>
+              <!-- Detalhes internos -->
+              <rect x="12" y="12" width="8" height="2" fill="white" opacity="0.8" rx="1"/>
+              <rect x="12" y="16" width="12" height="2" fill="white" opacity="0.6" rx="1"/>
+              <rect x="12" y="20" width="6" height="2" fill="white" opacity="0.4" rx="1"/>
+            </svg>
+          </div>
+          <h1 class="brand-title">Fahd ERP</h1>
+        </div>
       </div>
       
       <div class="navbar-center">
@@ -28,12 +48,16 @@
           <span class="user-name">filhotecmail@gmail.com</span>
           <div class="user-avatar">F</div>
         </div>
-        <button @click="logout" class="logout-btn" title="Sair do sistema">Sair</button>
+        <button @click="logout" class="logout-btn" title="Sair do sistema">
+          <svg viewBox="0 0 24 24" class="logout-icon">
+            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
+          </svg>
+        </button>
       </div>
     </nav>
 
     <!-- Barra de Abas -->
-    <div class="tabs-bar" v-if="tabCache.tabs.value.length > 1">
+    <div class="tabs-bar" v-if="tabCache.tabs.value.length > 0">
       <div class="tabs-container">
         <div 
           v-for="tab in tabCache.tabs.value" 
@@ -87,6 +111,12 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.vendas">
+                <div class="nav-subitem" @click="setActiveModule('dashboard-vendas')" title="Dashboard de vendas e métricas">
+                  <svg class="nav-subicon" viewBox="0 0 24 24">
+                    <path d="M3,13H11V3H3M3,21H11V15H3M13,21H21V11H13M13,3V9H21V3"/>
+                  </svg>
+                  <span>Dashboard Vendas</span>
+                </div>
                 <div class="nav-subitem" @click="setActiveModule('vendas')" title="Gerenciar pedidos de venda">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M19,7H18V6A2,2 0 0,0 16,4H8A2,2 0 0,0 6,6V7H5A3,3 0 0,0 2,10V19A3,3 0 0,0 5,22H19A3,3 0 0,0 22,19V10A3,3 0 0,0 19,7M8,6H16V7H8V6Z"/>
@@ -376,7 +406,7 @@
       <!-- Conteúdo Principal -->
       <main class="main-content">
           <!-- Conteúdo da Aba Ativa com Cache -->
-          <div class="module-content">
+          <div class="module-content" v-if="tabCache.tabs.value.length > 0">
             <component 
               :is="tabCache.activeTabComponent.value"
               v-if="tabCache.activeTabComponent.value"
@@ -398,6 +428,27 @@
               </div>
             </div>
           </div>
+          
+          <!-- Estado inicial - sem abas abertas -->
+          <div class="welcome-state" v-else>
+            <div class="welcome-content">
+              <div class="welcome-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/>
+                </svg>
+              </div>
+              <h2>Bem-vindo ao Sistema ERP</h2>
+              <p>Selecione um módulo no menu lateral para começar a trabalhar.</p>
+              <div class="welcome-tips">
+                <h3>Dicas:</h3>
+                <ul>
+                  <li>Use o menu lateral para navegar entre os módulos</li>
+                  <li>As abas permitem trabalhar com múltiplos módulos simultaneamente</li>
+                  <li>Clique no ícone ✕ para fechar abas desnecessárias</li>
+                </ul>
+              </div>
+            </div>
+          </div>
       </main>
     </div>
   </div>
@@ -407,7 +458,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
-import DashboardComponent from '@/components/DashboardComponent.vue'
+import DashboardComponent from '@/components/DashboardComponent.vue' // Componente removido
 import { useThemeStore } from '@/stores/theme'
 import { useTabCache } from '@/composables/useTabCache'
 import { moduleSystem } from '@/modules/core/moduleSystem'
@@ -417,7 +468,7 @@ const themeStore = useThemeStore()
 
 // Estados da interface
 const sidebarOpen = ref(false)
-const activeModule = ref('dashboard')
+const activeModule = ref<string | null>(null)
 const searchQuery = ref('')
 
 // Sistema de abas com cache
@@ -430,6 +481,7 @@ const tabCache = useTabCache({
 
 // Registrar componentes das abas
 tabCache.registerTabComponent('dashboard', DashboardComponent)
+tabCache.registerTabComponent('dashboard-vendas', DashboardComponent)
 
 // Registrar componentes dos módulos dinamicamente
 const registerModuleComponents = async () => {
@@ -598,6 +650,7 @@ const getModuleTitle = (module: string) => {
   // Títulos estáticos para módulos básicos
   const staticTitles: Record<string, string> = {
     dashboard: 'Dashboard',
+    'dashboard-vendas': 'Dashboard Vendas',
     vendas: 'Pedidos de Venda',
     clientes: 'Cadastro de Clientes',
     propostas: 'Propostas Comerciais',
@@ -653,8 +706,19 @@ const getModuleTitle = (module: string) => {
 
 // Função formatCurrency removida - não utilizada
 
-const logout = () => {
-  router.push('/login')
+const logout = async () => {
+  const { SwalCustom } = await import('../plugins/sweetalert')
+  
+  const result = await SwalCustom.confirm(
+    'Sair da Aplicação',
+    'Tem certeza que deseja sair do sistema?',
+    'Sim, sair',
+    'Cancelar'
+  )
+  
+  if (result.isConfirmed) {
+    router.push('/login')
+  }
 }
 
 // Fechar sidebar ao clicar fora (mobile)
@@ -665,15 +729,8 @@ onMounted(async () => {
   // Inicializar tema
   themeStore.initTheme()
   
-  // Adicionar aba inicial do dashboard se não existir
-  if (tabCache.tabs.value.length === 0) {
-    await tabCache.addTab({
-      id: 'dashboard',
-      title: 'Dashboard',
-      component: 'dashboard',
-      closable: false
-    })
-  }
+  // Dashboard não será mais carregado automaticamente
+  // O usuário deve clicar em "Dashboard Vendas" no menu CRM/Vendas para visualizar
   
   document.addEventListener('click', (e) => {
     const sidebar = document.querySelector('.sidebar')
@@ -689,24 +746,36 @@ onMounted(async () => {
 <style scoped>
 .dashboard-container {
   min-height: 100vh;
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, rgba(0, 255, 127, 0.15), rgba(102, 126, 234, 0.15));
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.dashboard-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 255, 127, 0.08), rgba(102, 126, 234, 0.08));
+  z-index: -1;
 }
 
 /* Navbar Superior */
 .top-navbar {
-  background: var(--bg-secondary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #667eea));
   border-bottom: 1px solid var(--border-color);
-  padding: 0 1rem;
-  height: 60px;
+  padding: 0 2rem;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-left {
@@ -729,18 +798,46 @@ onMounted(async () => {
 .hamburger-btn span {
   width: 20px;
   height: 2px;
-  background: var(--text-primary);
+  background: white;
   transition: all 0.3s ease;
 }
 
 .hamburger-btn:hover span {
-  background: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(0, 255, 127, 0.05);
+  transition: all 0.3s ease;
+}
+
+.brand-logo:hover {
+  background: rgba(0, 255, 127, 0.1);
+  transform: scale(1.05);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
 }
 
 .brand-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--accent-primary);
+  color: white;
   margin: 0;
   user-select: none;
 }
@@ -759,11 +856,16 @@ onMounted(async () => {
 .search-box input {
   width: 100%;
   padding: 0.5rem 2.5rem 0.5rem 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  background: var(--input-bg);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
   font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .search-btn {
@@ -780,7 +882,7 @@ onMounted(async () => {
 .search-btn svg {
   width: 18px;
   height: 18px;
-  fill: var(--text-secondary);
+  fill: rgba(255, 255, 255, 0.8);
 }
 
 .navbar-right {
@@ -797,7 +899,7 @@ onMounted(async () => {
 
 .user-name {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
   user-select: none;
 }
 
@@ -816,20 +918,36 @@ onMounted(async () => {
 }
 
 .logout-btn {
-  padding: 0.5rem 1rem;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  color: var(--text-primary);
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
 }
 
 .logout-btn:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: var(--bg-primary);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.logout-icon {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover .logout-icon {
+  fill: rgba(255, 255, 255, 0.9);
 }
 
 /* Layout Principal */
@@ -853,6 +971,7 @@ onMounted(async () => {
   z-index: 90;
   overflow-y: auto;
   overflow-x: hidden;
+  box-shadow: var(--shadow-md);
 }
 
 .sidebar:hover {
@@ -932,12 +1051,12 @@ onMounted(async () => {
 }
 
 .nav-item:hover {
-  background: rgba(0, 255, 127, 0.1);
+  background: var(--accent-glow);
   color: var(--accent-primary);
 }
 
 .nav-item.active {
-  background: rgba(0, 255, 127, 0.15);
+  background: var(--accent-glow);
   color: var(--accent-primary);
   border-right: 3px solid var(--accent-primary);
 }
@@ -950,10 +1069,17 @@ onMounted(async () => {
 
 .nav-group .group-header {
   justify-content: center;
+  position: relative;
 }
 
 .sidebar:hover .nav-group .group-header {
   justify-content: space-between;
+}
+
+.nav-group.expanded .group-header {
+  background: var(--accent-glow);
+  border-radius: 6px;
+  margin: 2px 0;
 }
 
 .expand-icon {
@@ -973,26 +1099,44 @@ onMounted(async () => {
 }
 
 .nav-submenu {
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(0, 255, 127, 0.05), rgba(0, 255, 127, 0.02));
+  border-left: 2px solid rgba(0, 255, 127, 0.2);
+  margin: 0.25rem 0;
+  border-radius: 0 8px 8px 0;
   display: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar:hover .nav-submenu {
   display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .nav-subitem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 1rem 0.4rem 2.5rem;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 300;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 400;
   position: relative;
   user-select: none;
+  border-radius: 0 6px 6px 0;
+  margin: 2px 0;
 }
 
 .nav-subicon {
@@ -1013,8 +1157,18 @@ onMounted(async () => {
 }
 
 .nav-subitem:hover {
-  background: rgba(0, 255, 127, 0.1);
+  background: linear-gradient(135deg, rgba(0, 255, 127, 0.15), rgba(0, 255, 127, 0.08));
   color: var(--accent-primary);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 255, 127, 0.2);
+  border-left: 3px solid var(--accent-primary);
+}
+
+.nav-subitem.active {
+  background: linear-gradient(135deg, rgba(0, 255, 127, 0.2), rgba(0, 255, 127, 0.1));
+  color: var(--accent-primary);
+  border-left: 3px solid var(--accent-primary);
+  font-weight: 500;
 }
 
 /* Conteúdo Principal */
@@ -1062,17 +1216,18 @@ onMounted(async () => {
 .metric-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 255, 127, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .metric-icon {
@@ -1308,6 +1463,7 @@ onMounted(async () => {
 /* Módulos Placeholder */
 .module-content {
   padding: 0.25rem 0;
+  background: transparent;
 }
 
 .module-header h2 {
@@ -1322,7 +1478,8 @@ onMounted(async () => {
   padding: 4rem 2rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
 }
 
 .placeholder-icon {
@@ -1386,6 +1543,7 @@ onMounted(async () => {
   z-index: 90;
   overflow-x: auto;
   overflow-y: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .tabs-container {
@@ -1467,7 +1625,16 @@ onMounted(async () => {
     transition: margin-left 0.3s ease;
   }
   
+  .tabs-bar {
+    margin-left: 70px;
+    transition: margin-left 0.3s ease;
+  }
+  
   .sidebar:hover + .main-content {
+    margin-left: 280px;
+  }
+  
+  .sidebar:hover ~ .tabs-bar {
     margin-left: 280px;
   }
 }
@@ -1526,6 +1693,128 @@ onMounted(async () => {
   .tab-close-btn svg {
     width: 10px;
     height: 10px;
+  }
+}
+
+/* Estado de Boas-vindas */
+.welcome-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 2rem;
+}
+
+.welcome-content {
+  text-align: center;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 2rem;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(var(--accent-primary-rgb), 0.3);
+}
+
+.welcome-icon svg {
+  width: 40px;
+  height: 40px;
+  fill: white;
+}
+
+.welcome-content h2 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.welcome-content > p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.welcome-tips {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.welcome-tips h3 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.welcome-tips h3::before {
+  content: "💡";
+  font-size: 1.2rem;
+}
+
+.welcome-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.welcome-tips li {
+  color: var(--text-secondary);
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.welcome-tips li::before {
+  content: "•";
+  color: var(--accent-primary);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .welcome-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .welcome-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-content > p {
+    font-size: 1rem;
+  }
+  
+  .welcome-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .welcome-icon svg {
+    width: 30px;
+    height: 30px;
   }
 }
 

@@ -1,0 +1,304 @@
+<template>
+  <div class="{{kebabName}}-container">
+    <div class="form-container">
+      <!-- Card Heading -->
+      <ESocialCardHeading 
+        :title="'{{title}}'"
+        :subtitle="'{{description}}'"
+        :badge="'{{module}}'"
+        :icon-path="iconPath"
+      />
+      
+      <div class="esocial-form">
+        <!-- Main Content Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <div class="section-title-content">
+              <svg class="section-icon" viewBox="0 0 24 24">
+                <path d="{{iconPath}}"/>
+              </svg>
+              {{title}}
+            </div>
+          </h2>
+          
+          <div class="section-content">
+            <!-- Add your content here -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="example" class="form-label">Campo Exemplo</label>
+                <input
+                  id="example"
+                  v-model="exampleValue"
+                  type="text"
+                  class="form-input"
+                  placeholder="Digite um valor"
+                />
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="form-actions">
+              <button 
+                @click="handleSave" 
+                class="btn btn-primary"
+                :disabled="isLoading"
+              >
+                <svg v-if="isLoading" class="btn-icon animate-spin" viewBox="0 0 24 24">
+                  <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+                </svg>
+                <svg v-else class="btn-icon" viewBox="0 0 24 24">
+                  <path d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/>
+                </svg>
+                {{ isLoading ? 'Salvando...' : 'Salvar' }}
+              </button>
+              
+              <button 
+                @click="handleCancel" 
+                class="btn btn-secondary"
+                :disabled="isLoading"
+              >
+                <svg class="btn-icon" viewBox="0 0 24 24">
+                  <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                </svg>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import ESocialCardHeading from '@/components/ESocialCardHeading.vue'
+
+// Router
+const router = useRouter()
+
+// Reactive state
+const isLoading = ref(false)
+const exampleValue = ref('')
+
+// Icon path for the component
+const iconPath = 'M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z'
+
+// Methods
+const handleSave = async () => {
+  try {
+    isLoading.value = true
+    // Add save logic here
+    console.log('Saving {{componentName}}...', exampleValue.value)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Success feedback
+    console.log('{{componentName}} saved successfully!')
+  } catch (error) {
+    console.error('Error saving {{componentName}}:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const handleCancel = () => {
+  // Add cancel logic here
+  router.back()
+}
+
+// Lifecycle
+onMounted(() => {
+  // Add initialization logic here
+  console.log('{{componentName}} mounted')
+})
+</script>
+
+<style scoped>
+.{{kebabName}}-container {
+  padding: 0.25rem 0.25rem 1rem;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  user-select: none;
+}
+
+.form-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.esocial-form {
+  padding: 0.75rem;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 1rem 0;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.section-title-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.section-icon {
+  width: 20px;
+  height: 20px;
+  fill: var(--text-secondary);
+}
+
+.section-content {
+  padding: 0 0.75rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-alpha);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-color-dark);
+}
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-quaternary);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .{{kebabName}}-container {
+    padding: 0.25rem 0.25rem 1rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .{{kebabName}}-container {
+    padding: 0.25rem;
+  }
+  
+  .esocial-form {
+    padding: 0.5rem;
+  }
+  
+  .form-container {
+    margin: 0.25rem;
+    border-radius: 8px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    justify-content: center;
+  }
+}
+</style>

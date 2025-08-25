@@ -37,18 +37,20 @@ withDefaults(defineProps<Props>(), {
 .esocial-container {
   padding: 0.25rem 0.25rem 1rem;
   min-height: 100vh;
-  background: var(--bg-primary);
+  background: transparent;
   user-select: none;
 }
 
 .form-container {
   max-width: 1400px;
   margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  box-shadow: var(--shadow-xl);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .esocial-form {

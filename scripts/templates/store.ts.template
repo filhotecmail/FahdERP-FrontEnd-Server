@@ -1,0 +1,263 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+// Types and interfaces
+export interface {{pascalName}}Item {
+  id: string | number
+  name: string
+  // Add more properties as needed
+}
+
+export interface {{pascalName}}State {
+  items: {{pascalName}}Item[]
+  loading: boolean
+  error: string | null
+  selectedItem: {{pascalName}}Item | null
+}
+
+export interface {{pascalName}}Filters {
+  search: string
+  status: string
+  // Add more filters as needed
+}
+
+/**
+ * {{description}}
+ * 
+ * Pinia store for managing {{kebabName}} state
+ */
+export const use{{pascalName}}Store = defineStore('{{kebabName}}', () => {
+  // State
+  const items = ref<{{pascalName}}Item[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const selectedItem = ref<{{pascalName}}Item | null>(null)
+  
+  // Filters
+  const filters = ref<{{pascalName}}Filters>({
+    search: '',
+    status: ''
+  })
+  
+  // Computed
+  const filteredItems = computed(() => {
+    let result = items.value
+    
+    // Apply search filter
+    if (filters.value.search) {
+      const searchTerm = filters.value.search.toLowerCase()
+      result = result.filter(item => 
+        item.name.toLowerCase().includes(searchTerm)
+      )
+    }
+    
+    // Apply status filter
+    if (filters.value.status) {
+      result = result.filter(item => 
+        (item as any).status === filters.value.status
+      )
+    }
+    
+    return result
+  })
+  
+  const itemsCount = computed(() => items.value.length)
+  const filteredItemsCount = computed(() => filteredItems.value.length)
+  const hasItems = computed(() => items.value.length > 0)
+  const hasError = computed(() => !!error.value)
+  const isLoading = computed(() => loading.value)
+  
+  // Actions
+  const fetchItems = async (): Promise<void> => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      // Add your API call here
+      // Example: const response = await api.get{{pascalName}}s()
+      // items.value = response.data
+      
+      // Simulate API call for template
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      items.value = [
+        { id: 1, name: 'Example Item 1' },
+        { id: 2, name: 'Example Item 2' }
+      ]
+      
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch {{kebabName}}'
+      error.value = errorMessage
+      console.error('Error fetching {{kebabName}}:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  const createItem = async (itemData: Omit<{{pascalName}}Item, 'id'>): Promise<{{pascalName}}Item | null> => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      // Add your API call here
+      // Example: const response = await api.create{{pascalName}}(itemData)
+      // const newItem = response.data
+      
+      // Simulate API call for template
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const newItem: {{pascalName}}Item = {
+        id: Date.now(),
+        ...itemData
+      }
+      
+      items.value.push(newItem)
+      return newItem
+      
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create {{kebabName}}'
+      error.value = errorMessage
+      console.error('Error creating {{kebabName}}:', err)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  const updateItem = async (id: string | number, updates: Partial<{{pascalName}}Item>): Promise<{{pascalName}}Item | null> => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      // Add your API call here
+      // Example: const response = await api.update{{pascalName}}(id, updates)
+      // const updatedItem = response.data
+      
+      // Simulate API call for template
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const index = items.value.findIndex(item => item.id === id)
+      if (index > -1) {
+        const updatedItem = { ...items.value[index], ...updates }
+        items.value[index] = updatedItem
+        
+        // Update selected item if it's the one being updated
+        if (selectedItem.value?.id === id) {
+          selectedItem.value = updatedItem
+        }
+        
+        return updatedItem
+      }
+      
+      return null
+      
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update {{kebabName}}'
+      error.value = errorMessage
+      console.error('Error updating {{kebabName}}:', err)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  const deleteItem = async (id: string | number): Promise<boolean> => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      // Add your API call here
+      // Example: await api.delete{{pascalName}}(id)
+      
+      // Simulate API call for template
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const index = items.value.findIndex(item => item.id === id)
+      if (index > -1) {
+        items.value.splice(index, 1)
+        
+        // Clear selected item if it's the one being deleted
+        if (selectedItem.value?.id === id) {
+          selectedItem.value = null
+        }
+        
+        return true
+      }
+      
+      return false
+      
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete {{kebabName}}'
+      error.value = errorMessage
+      console.error('Error deleting {{kebabName}}:', err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  const selectItem = (item: {{pascalName}}Item | null): void => {
+    selectedItem.value = item
+  }
+  
+  const findItemById = (id: string | number): {{pascalName}}Item | undefined => {
+    return items.value.find(item => item.id === id)
+  }
+  
+  const clearError = (): void => {
+    error.value = null
+  }
+  
+  const resetStore = (): void => {
+    items.value = []
+    loading.value = false
+    error.value = null
+    selectedItem.value = null
+    filters.value = {
+      search: '',
+      status: ''
+    }
+  }
+  
+  const setFilter = (key: keyof {{pascalName}}Filters, value: string): void => {
+    filters.value[key] = value
+  }
+  
+  const clearFilters = (): void => {
+    filters.value = {
+      search: '',
+      status: ''
+    }
+  }
+  
+  // Return state and actions
+  return {
+    // State
+    items,
+    loading,
+    error,
+    selectedItem,
+    filters,
+    
+    // Computed
+    filteredItems,
+    itemsCount,
+    filteredItemsCount,
+    hasItems,
+    hasError,
+    isLoading,
+    
+    // Actions
+    fetchItems,
+    createItem,
+    updateItem,
+    deleteItem,
+    selectItem,
+    findItemById,
+    clearError,
+    resetStore,
+    setFilter,
+    clearFilters
+  }
+})
+
+// Export type for the store
+export type {{pascalName}}Store = ReturnType<typeof use{{pascalName}}Store>

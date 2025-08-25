@@ -95,25 +95,28 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  color: var(--text-primary);
+  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
   min-width: 140px;
   user-select: none;
+  backdrop-filter: blur(10px);
 }
 
 .theme-button:hover {
-  background: var(--input-bg);
-  border-color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 .theme-button.active {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px var(--accent-glow);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .theme-icon {
@@ -146,12 +149,13 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   margin-top: 4px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   overflow: hidden;
+  backdrop-filter: blur(15px);
 }
 
 .theme-option {
@@ -170,11 +174,11 @@ onUnmounted(() => {
 }
 
 .theme-option:hover {
-  background: var(--input-bg);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .theme-option.selected {
-  background: var(--accent-glow);
+  background: rgba(0, 0, 0, 0.1);
   color: var(--accent-primary);
 }
 

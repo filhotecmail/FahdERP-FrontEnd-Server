@@ -1,0 +1,167 @@
+import { ref, computed, reactive, watch } from 'vue'
+import type { Ref, ComputedRef } from 'vue'
+
+// Types and interfaces
+export interface {{pascalName}}Options {
+  // Add configuration options here
+  autoLoad?: boolean
+  cacheEnabled?: boolean
+}
+
+export interface {{pascalName}}State {
+  // Add state properties here
+  data: any[]
+  loading: boolean
+  error: string | null
+}
+
+export interface {{pascalName}}Actions {
+  // Add action methods here
+  load: () => Promise<void>
+  refresh: () => Promise<void>
+  reset: () => void
+}
+
+// Default options
+const defaultOptions: {{pascalName}}Options = {
+  autoLoad: true,
+  cacheEnabled: false
+}
+
+/**
+ * {{description}}
+ * 
+ * @param options - Configuration options for the composable
+ * @returns Object with reactive state and methods
+ */
+export function {{camelName}}(options: Partial<{{pascalName}}Options> = {}) {
+  // Merge options with defaults
+  const config = { ...defaultOptions, ...options }
+  
+  // Reactive state
+  const state = reactive<{{pascalName}}State>({
+    data: [],
+    loading: false,
+    error: null
+  })
+  
+  // Refs for individual reactive values
+  const isLoading = ref(false)
+  const hasError = ref(false)
+  
+  // Computed properties
+  const isEmpty: ComputedRef<boolean> = computed(() => {
+    return state.data.length === 0
+  })
+  
+  const hasData: ComputedRef<boolean> = computed(() => {
+    return state.data.length > 0
+  })
+  
+  const isReady: ComputedRef<boolean> = computed(() => {
+    return !state.loading && !state.error
+  })
+  
+  // Methods
+  const load = async (): Promise<void> => {
+    try {
+      state.loading = true
+      state.error = null
+      isLoading.value = true
+      
+      // Add your loading logic here
+      // Example: const response = await api.getData()
+      // state.data = response.data
+      
+      // Simulate API call for template
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      state.data = [{ id: 1, name: 'Example data' }]
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      state.error = errorMessage
+      hasError.value = true
+      console.error('{{pascalName}} load error:', error)
+    } finally {
+      state.loading = false
+      isLoading.value = false
+    }
+  }
+  
+  const refresh = async (): Promise<void> => {
+    // Clear current data and reload
+    state.data = []
+    await load()
+  }
+  
+  const reset = (): void => {
+    state.data = []
+    state.loading = false
+    state.error = null
+    isLoading.value = false
+    hasError.value = false
+  }
+  
+  const addItem = (item: any): void => {
+    state.data.push(item)
+  }
+  
+  const removeItem = (id: string | number): void => {
+    const index = state.data.findIndex(item => item.id === id)
+    if (index > -1) {
+      state.data.splice(index, 1)
+    }
+  }
+  
+  const updateItem = (id: string | number, updates: Partial<any>): void => {
+    const index = state.data.findIndex(item => item.id === id)
+    if (index > -1) {
+      state.data[index] = { ...state.data[index], ...updates }
+    }
+  }
+  
+  const findItem = (id: string | number) => {
+    return state.data.find(item => item.id === id)
+  }
+  
+  // Watchers
+  watch(
+    () => state.error,
+    (newError) => {
+      hasError.value = !!newError
+    }
+  )
+  
+  // Auto-load if enabled
+  if (config.autoLoad) {
+    load()
+  }
+  
+  // Return reactive state and methods
+  return {
+    // State
+    state: readonly(state),
+    isLoading: readonly(isLoading),
+    hasError: readonly(hasError),
+    
+    // Computed
+    isEmpty,
+    hasData,
+    isReady,
+    
+    // Methods
+    load,
+    refresh,
+    reset,
+    addItem,
+    removeItem,
+    updateItem,
+    findItem,
+    
+    // Configuration
+    config: readonly(config)
+  }
+}
+
+// Export type for the composable return
+export type {{pascalName}}Composable = ReturnType<typeof {{camelName}}>

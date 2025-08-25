@@ -43,16 +43,10 @@
       </div>
       
       <div class="navbar-right">
+        <WeatherWidget />
         <ThemeSelector />
-        <div class="user-info">
-          <span class="user-name">filhotecmail@gmail.com</span>
-          <div class="user-avatar">F</div>
-        </div>
-        <button @click="logout" class="logout-btn" title="Sair do sistema">
-          <svg viewBox="0 0 24 24" class="logout-icon">
-            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
-          </svg>
-        </button>
+        <UserDropdown />
+        <LogoutDropdown />
       </div>
     </nav>
 
@@ -455,9 +449,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, provide } from 'vue'
 import { useRouter, type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
+import WeatherWidget from '@/components/WeatherWidget.vue'
+import UserDropdown from '@/components/UserDropdown.vue'
+import LogoutDropdown from '@/components/LogoutDropdown.vue'
 import DashboardComponent from '@/components/DashboardComponent.vue' // Componente removido
 import { useThemeStore } from '@/stores/theme'
 import { useTabCache } from '@/composables/useTabCache'
@@ -478,6 +475,9 @@ const tabCache = useTabCache({
   persistTabs: true,
   autoCloseInactive: false
 })
+
+// Prover o tabCache para componentes filhos
+provide('tabCache', tabCache)
 
 // Registrar componentes das abas
 tabCache.registerTabComponent('dashboard', DashboardComponent)
@@ -916,32 +916,6 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.user-name {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  user-select: none;
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  color: var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-  user-select: none;
 }
 
 .logout-btn {

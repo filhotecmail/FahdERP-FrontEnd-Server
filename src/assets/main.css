@@ -363,3 +363,36 @@ input::placeholder, textarea::placeholder {
     display: none !important;
   }
 }
+
+/* ===== ESTILOS GLOBAIS ESOCIAL ===== */
+/* Containers principais dos formulários eSocial */
+[class*="esocial-"][class*="-container"] {
+  min-height: 100vh;
+  background: transparent;
+  padding: 0.5rem 1rem 1.5rem;
+  user-select: none;
+}
+
+/* Containers dos cards de formulário */
+[class*="esocial-"] .form-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+/* Formulários eSocial com fundo temático */
+[class*="esocial-"] .esocial-form {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  color: var(--text-primary);
+}
+
+/* Aplicar transparência ao module-content globalmente */
+.module-content {
+  background: transparent;
+}

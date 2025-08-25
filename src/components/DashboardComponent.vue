@@ -1,92 +1,110 @@
 <template>
   <div class="dashboard-content">
+    <!-- Dashboard Header -->
     <div class="dashboard-header">
-      <h2 title="Painel principal com métricas e indicadores">Dashboard Executivo</h2>
+      <h2>Dashboard</h2>
       <div class="date-filter">
-        <DatePicker 
-          v-model="selectedDate" 
-          placeholder="Selecione uma data"
-          @change="onDateChange"
+        <input 
+          type="date" 
+          v-model="currentDate" 
+          class="date-picker"
         />
       </div>
     </div>
 
-    <!-- Cards de Métricas -->
+    <!-- Metrics Grid -->
     <div class="metrics-grid">
-      <div class="metric-card sales" title="Total de vendas realizadas hoje">
+      <div class="metric-card sales">
         <div class="metric-icon">
           <svg viewBox="0 0 24 24">
             <path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/>
           </svg>
         </div>
         <div class="metric-content">
-          <h3>Vendas do Dia</h3>
-          <div class="metric-value">R$ {{ formatCurrency(dailyMetrics.sales) }}</div>
-          <div class="metric-change positive">+12.5% vs ontem</div>
+          <h3>Vendas do Mês</h3>
+          <div class="metric-value">R$ 45.230</div>
+          <div class="metric-change positive">+12.5%</div>
         </div>
       </div>
 
-      <div class="metric-card orders" title="Número de pedidos processados hoje">
+      <div class="metric-card products">
         <div class="metric-icon">
           <svg viewBox="0 0 24 24">
-            <path d="M19,7H22V9H19V12H17V9H14V7H17V4H19V7M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V20C21,21.1 20.1,22 19,22H5C3.9,22 3,21.1 3,20V9C3,7.9 3.9,7 5,7H7.53C7.85,7.47 8.32,7.85 8.87,8.11C9.42,8.36 10.2,8.5 12,8.5C13.8,8.5 14.58,8.36 15.13,8.11C15.68,7.85 16.15,7.47 16.47,7H19C20.1,7 21,7.9 21,9Z"/>
+            <path d="M12,2L2,7L12,12L22,7L12,2M2,17L12,22L22,17M2,12L12,17L22,12"/>
           </svg>
         </div>
         <div class="metric-content">
-          <h3>Pedidos</h3>
-          <div class="metric-value">{{ dailyMetrics.orders }}</div>
-          <div class="metric-change positive">+8.2% vs ontem</div>
+          <h3>Produtos em Estoque</h3>
+          <div class="metric-value">1.234</div>
+          <div class="metric-change negative">-2.3%</div>
         </div>
       </div>
 
-      <div class="metric-card customers" title="Novos clientes cadastrados hoje">
+      <div class="metric-card profit">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M3,3V21H21V19H5V3H3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3>Lucro Líquido</h3>
+          <div class="metric-value">R$ 12.450</div>
+          <div class="metric-change positive">+8.2%</div>
+        </div>
+      </div>
+
+      <div class="metric-card revenue">
         <div class="metric-icon">
           <svg viewBox="0 0 24 24">
             <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
           </svg>
         </div>
         <div class="metric-content">
-          <h3>Novos Clientes</h3>
-          <div class="metric-value">{{ dailyMetrics.newCustomers }}</div>
-          <div class="metric-change positive">+15.3% vs ontem</div>
-        </div>
-      </div>
-
-      <div class="metric-card revenue" title="Receita total do mês">
-        <div class="metric-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M3,6H21V18H3V6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M7,8A2,2 0 0,1 5,10V14A2,2 0 0,1 7,16H17A2,2 0 0,1 19,14V10A2,2 0 0,1 17,8H7Z"/>
-          </svg>
-        </div>
-        <div class="metric-content">
-          <h3>Receita Mensal</h3>
-          <div class="metric-value">R$ {{ formatCurrency(dailyMetrics.monthlyRevenue) }}</div>
-          <div class="metric-change positive">+22.1% vs mês anterior</div>
+          <h3>Clientes Ativos</h3>
+          <div class="metric-value">892</div>
+          <div class="metric-change positive">+5.7%</div>
         </div>
       </div>
     </div>
 
-    <!-- Grid Principal do Dashboard -->
+    <!-- Dashboard Grid -->
     <div class="dashboard-grid">
-      <!-- Gráfico de Vendas -->
       <div class="chart-section">
         <h3>Vendas dos Últimos 7 Dias</h3>
-        <SalesLineChart />
+        <div class="chart-placeholder">
+          <div class="chart-bars">
+            <div class="bar" style="height: 60%">
+              <span class="bar-value">R$ 2.1k</span>
+              <span class="bar-label">Seg</span>
+            </div>
+            <div class="bar" style="height: 80%">
+              <span class="bar-value">R$ 2.8k</span>
+              <span class="bar-label">Ter</span>
+            </div>
+            <div class="bar" style="height: 45%">
+              <span class="bar-value">R$ 1.6k</span>
+              <span class="bar-label">Qua</span>
+            </div>
+            <div class="bar" style="height: 90%">
+              <span class="bar-value">R$ 3.2k</span>
+              <span class="bar-label">Qui</span>
+            </div>
+            <div class="bar" style="height: 70%">
+              <span class="bar-value">R$ 2.5k</span>
+              <span class="bar-label">Sex</span>
+            </div>
+            <div class="bar" style="height: 55%">
+              <span class="bar-value">R$ 1.9k</span>
+              <span class="bar-label">Sáb</span>
+            </div>
+            <div class="bar" style="height: 35%">
+              <span class="bar-value">R$ 1.2k</span>
+              <span class="bar-label">Dom</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Gráfico de Barras -->
-      <div class="chart-section">
-        <h3>Vendas por Categoria</h3>
-        <SalesBarChart />
-      </div>
-
-      <!-- Gráfico de Pizza -->
-      <div class="chart-section">
-        <h3>Canais de Venda</h3>
-        <SalesPieChart title="Canais de Venda" />
-      </div>
-
-      <!-- Agenda do Dia -->
       <div class="agenda-section">
         <h3>Agenda do Dia</h3>
         <div class="agenda-list">
@@ -98,6 +116,7 @@
             </div>
             <div class="appointment-status confirmed">Confirmado</div>
           </div>
+          
           <div class="agenda-item">
             <div class="appointment-time">14:30</div>
             <div class="appointment-details">
@@ -106,31 +125,15 @@
             </div>
             <div class="appointment-status pending">Pendente</div>
           </div>
+          
           <div class="agenda-item">
             <div class="appointment-time">16:00</div>
             <div class="appointment-details">
-              <div class="appointment-title">Follow-up Vendas</div>
-              <div class="appointment-client">Diversos clientes</div>
+              <div class="appointment-title">Revisão de Estoque</div>
+              <div class="appointment-client">Interno</div>
             </div>
             <div class="appointment-status completed">Concluído</div>
           </div>
-        </div>
-        <button class="add-appointment-btn">+ Adicionar Compromisso</button>
-      </div>
-    </div>
-
-    <!-- Seção de Widgets -->
-    <div class="widgets-section">
-      <h3>Informações em Tempo Real</h3>
-      <div class="widgets-grid">
-        <div class="widget-container">
-          <WeatherWidget />
-        </div>
-        <div class="widget-container">
-          <CurrencyWidget />
-        </div>
-        <div class="widget-container">
-          <CryptoWidget />
         </div>
       </div>
     </div>
@@ -138,40 +141,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import SalesLineChart from '@/components/charts/SalesLineChart.vue'
-import SalesBarChart from '@/components/charts/SalesBarChart.vue'
-import SalesPieChart from '@/components/charts/SalesPieChart.vue'
-import WeatherWidget from '@/components/widgets/WeatherWidget.vue'
-import CurrencyWidget from '@/components/widgets/CurrencyWidget.vue'
-import CryptoWidget from '@/components/widgets/CryptoWidget.vue'
-import DatePicker from '@/components/DatePicker.vue'
+import { ref } from 'vue'
 
-const selectedDate = ref(new Date().toISOString().split('T')[0])
-
-// Métricas do dashboard
-const dailyMetrics = reactive({
-  sales: 15420.50,
-  orders: 47,
-  newCustomers: 12,
-  monthlyRevenue: 284750.25
-})
-
-const onDateChange = (newDate: string) => {
-  console.log('Data selecionada:', newDate)
-  // Aqui você pode adicionar lógica para filtrar dados baseado na data
-}
-
-const formatCurrency = (value: number) => {
-  return value.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })
-}
+const currentDate = ref(new Date().toISOString().split('T')[0])
 </script>
 
 <style scoped>
-/* Dashboard */
+.dashboard-content {
+  padding: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -183,15 +164,25 @@ const formatCurrency = (value: number) => {
   margin: 0;
   color: var(--text-primary);
   font-size: 2rem;
-  font-weight: 600;
   user-select: none;
 }
 
 .date-filter {
-  min-width: 200px;
+  display: flex;
+  align-items: center;
+  min-width: 280px;
 }
 
-/* Métricas */
+.date-picker {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+/* Cards de Métricas */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -208,44 +199,42 @@ const formatCurrency = (value: number) => {
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.metric-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--accent-primary);
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 255, 127, 0.1);
 }
 
 .metric-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 255, 127, 0.1);
-  flex-shrink: 0;
+}
+
+.metric-card.sales .metric-icon {
+  background: rgba(0, 255, 127, 0.2);
+}
+
+.metric-card.products .metric-icon {
+  background: rgba(54, 162, 235, 0.2);
+}
+
+.metric-card.profit .metric-icon {
+  background: rgba(255, 206, 86, 0.2);
+}
+
+.metric-card.revenue .metric-icon {
+  background: rgba(153, 102, 255, 0.2);
 }
 
 .metric-icon svg {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   fill: var(--accent-primary);
-}
-
-.metric-content {
-  flex: 1;
 }
 
 .metric-content h3 {
@@ -253,8 +242,6 @@ const formatCurrency = (value: number) => {
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   user-select: none;
 }
 
@@ -283,18 +270,12 @@ const formatCurrency = (value: number) => {
 /* Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
   margin-bottom: 2rem;
 }
 
 @media (max-width: 1200px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -313,6 +294,57 @@ const formatCurrency = (value: number) => {
   margin: 0 0 1rem;
   color: var(--text-primary);
   font-size: 1.2rem;
+  user-select: none;
+}
+
+/* Gráfico Simples */
+.chart-placeholder {
+  height: 200px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+  height: 100%;
+}
+
+.bar {
+  width: 40px;
+  background: linear-gradient(to top, var(--accent-primary), rgba(0, 255, 127, 0.6));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.bar:hover {
+  transform: scale(1.05);
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -25px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  font-size: 0.7rem;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
   user-select: none;
 }
 
@@ -381,70 +413,15 @@ const formatCurrency = (value: number) => {
   color: #6b7280;
 }
 
-.add-appointment-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: transparent;
-  border: 2px dashed var(--border-color);
-  border-radius: 6px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  user-select: none;
-}
-
-.add-appointment-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-}
-
-/* Widgets Section */
-.widgets-section {
-  margin-top: 2rem;
-}
-
-.widgets-section h3 {
-  margin: 0 0 1.5rem;
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  font-weight: 600;
-  user-select: none;
-}
-
-.widgets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.widget-container {
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-}
-
 @media (max-width: 768px) {
-  .dashboard-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+  .dashboard-content {
+    padding: 1rem;
   }
   
   .metrics-grid {
     grid-template-columns: 1fr;
   }
   
-  .widgets-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .widget-container {
-    min-height: 350px;
-  }
-}
-
-@media (max-width: 480px) {
   .metric-card {
     flex-direction: column;
     text-align: center;

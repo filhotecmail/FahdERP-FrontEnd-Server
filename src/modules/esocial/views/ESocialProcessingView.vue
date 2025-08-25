@@ -640,26 +640,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.esocial-processing-container {
-  min-height: 100vh;
-  background: var(--bg-primary);
-  padding: 0.5rem 1rem 1.5rem;
-  user-select: none;
-}
-
-.form-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.esocial-form {
-  padding: 1.5rem;
-}
+/* Estilos específicos do Processing (estilos globais aplicados via main.css) */
 
 .form-section {
   margin-bottom: 1.5rem;
@@ -813,7 +794,7 @@ onMounted(() => {
 }
 
 .data-table tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--hover-bg);
 }
 
 .checkbox-column {
@@ -839,12 +820,12 @@ onMounted(() => {
 
 /* Estilos para linhas com status de processamento */
 .row-processing {
-  background-color: #f8f9fa !important;
+  background-color: var(--bg-tertiary) !important;
   opacity: 0.8;
 }
 
 .row-success {
-  background-color: #d4edda !important; /* Verde clarinho */
+  background-color: var(--success-bg) !important;
 }
 
 .row-critics {

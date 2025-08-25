@@ -1,0 +1,67 @@
+import type { App } from 'vue'
+import type { Router } from 'vue-router'
+import type { ModuleDefinition } from '../core/moduleSystem'
+
+const {{camelName}}Module: ModuleDefinition = {
+  name: '{{kebabName}}',
+  install() {
+    console.log('Módulo {{title}} instalado com sucesso')
+  },
+  components: {
+    '{{kebabName}}-main': () => import('./views/{{pascalName}}MainView.vue'),
+    '{{kebabName}}-list': () => import('./views/{{pascalName}}ListView.vue'),
+    '{{kebabName}}-form': () => import('./views/{{pascalName}}FormView.vue')
+  },
+  routes: [
+    {
+      path: '/{{kebabName}}',
+      name: '{{kebabName}}-main',
+      component: () => import('./views/{{pascalName}}MainView.vue'),
+      meta: { title: '{{title}} - Principal' }
+    },
+    {
+      path: '/{{kebabName}}/list',
+      name: '{{kebabName}}-list',
+      component: () => import('./views/{{pascalName}}ListView.vue'),
+      meta: { title: '{{title}} - Lista' }
+    },
+    {
+      path: '/{{kebabName}}/form',
+      name: '{{kebabName}}-form',
+      component: () => import('./views/{{pascalName}}FormView.vue'),
+      meta: { title: '{{title}} - Formulário' }
+    },
+    {
+      path: '/{{kebabName}}/form/:id',
+      name: '{{kebabName}}-form-edit',
+      component: () => import('./views/{{pascalName}}FormView.vue'),
+      meta: { title: '{{title}} - Editar' }
+    }
+  ],
+  navigation: {
+    title: '{{title}}',
+    icon: '{{iconPath}}',
+    items: [
+      {
+        id: '{{kebabName}}-main',
+        title: 'Principal',
+        route: '/{{kebabName}}',
+        icon: 'mdi-view-dashboard'
+      },
+      {
+        id: '{{kebabName}}-list',
+        title: 'Lista',
+        route: '/{{kebabName}}/list',
+        icon: 'mdi-format-list-bulleted'
+      },
+      {
+        id: '{{kebabName}}-form',
+        title: 'Novo',
+        route: '/{{kebabName}}/form',
+        icon: 'mdi-plus-circle'
+      }
+    ]
+  }
+}
+
+export default {{camelName}}Module

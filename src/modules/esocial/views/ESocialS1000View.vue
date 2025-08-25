@@ -310,7 +310,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { getOpcoesSelect } from '@/data/esocial-tables.js'
-import ESocialCardHeading from '@/components/ESocialCardHeading.vue'
+import ESocialCardHeading from '../components/ESocialCardHeading.vue'
 import { useTabState } from '@/composables/useTabState'
 
 // Estados do componente
@@ -450,28 +450,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.esocial-s1000-container {
-  min-height: 100vh;
-  background: var(--bg-primary);
-  padding: 0.5rem 1rem 1.5rem;
-  user-select: none;
-}
-
-
-
-.form-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.esocial-form {
-  padding: 1.5rem;
-}
+/* Estilos específicos do S-1000 (estilos globais aplicados via main.css) */
 
 .form-section {
   margin-bottom: 1.5rem;

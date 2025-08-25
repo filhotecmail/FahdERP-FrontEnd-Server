@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import { configureSweetAlert } from './plugins/sweetalert'
 
 import App from './App.vue'
 import router, { registerModuleRoutes } from './router'
@@ -53,6 +54,9 @@ app.use(Toast, {
 // Inicializar tema
 const themeStore = useThemeStore()
 themeStore.initTheme()
+
+// Configurar SweetAlert com tema personalizado
+configureSweetAlert()
 
 // Adicionar ferramentas de debug em desenvolvimento
 if (import.meta.env.DEV) {

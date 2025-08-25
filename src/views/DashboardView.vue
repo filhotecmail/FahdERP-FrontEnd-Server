@@ -111,31 +111,31 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.vendas">
-                <div class="nav-subitem" @click="setActiveModule('dashboard-vendas')" title="Dashboard de vendas e métricas">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('dashboard-vendas')" title="Dashboard de vendas e métricas">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M3,13H11V3H3M3,21H11V15H3M13,21H21V11H13M13,3V9H21V3"/>
                   </svg>
                   <span>Dashboard Vendas</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('vendas')" title="Gerenciar pedidos de venda">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('vendas')" title="Gerenciar pedidos de venda">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M19,7H18V6A2,2 0 0,0 16,4H8A2,2 0 0,0 6,6V7H5A3,3 0 0,0 2,10V19A3,3 0 0,0 5,22H19A3,3 0 0,0 22,19V10A3,3 0 0,0 19,7M8,6H16V7H8V6Z"/>
                   </svg>
                   <span>Pedidos de Venda</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('clientes')" title="Cadastro e gestão de clientes">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('clientes')" title="Cadastro e gestão de clientes">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
                   </svg>
                   <span>Cadastro de Clientes</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('propostas')" title="Criar e gerenciar propostas comerciais">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('propostas')" title="Criar e gerenciar propostas comerciais">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                   </svg>
                   <span>Propostas Comerciais</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('comissoes')" title="Controle de comissões de vendas">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('comissoes')" title="Controle de comissões de vendas">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9Z"/>
                   </svg>
@@ -162,25 +162,25 @@
                   </svg>
                   <span>Cadastro de Produtos</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('compras')" title="Gerenciar compras e pedidos">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('compras')" title="Gerenciar compras e pedidos">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M17,18C17.56,18 18,18.44 18,19A1,1 0 0,1 17,20H7A1,1 0 0,1 6,19C6,18.44 6.44,18 7,18H17M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5H5.21L4.27,3H1Z"/>
                   </svg>
                   <span>Compras</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('fornecedores')" title="Cadastro de fornecedores">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('fornecedores')" title="Cadastro de fornecedores">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M12,2A3,3 0 0,1 15,5A3,3 0 0,1 12,8A3,3 0 0,1 9,5A3,3 0 0,1 12,2M21,9V20H3V9L6,6H18L21,9M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10Z"/>
                   </svg>
                   <span>Fornecedores</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('inventario')">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('inventario')">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M9,11H15L13.5,7.5L9,11M12,2L13.09,8.26L22,9L14,14L17,23L12,18L7,23L10,14L2,9L10.91,8.26L12,2Z"/>
                   </svg>
                   <span>Inventário</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('almoxarifado')">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('almoxarifado')">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M4,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M4,6V18H11V6H4M20,18V6H13V18H20Z"/>
                   </svg>
@@ -201,31 +201,31 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.financeiro">
-                <div class="nav-subitem" @click="setActiveModule('contas-receber')" title="Gerenciar contas a receber">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('contas-receber')" title="Gerenciar contas a receber">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M2,6H22V18H2V6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M7,8A2,2 0 0,1 5,10V14A2,2 0 0,1 7,16H17A2,2 0 0,1 19,14V10A2,2 0 0,1 17,8H7Z"/>
                   </svg>
                   <span>Contas a Receber</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('contas-pagar')" title="Gerenciar contas a pagar">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('contas-pagar')" title="Gerenciar contas a pagar">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H20A2,2 0 0,1 22,3V6H20V3H4V15H11V17M16,10V7L21,12L16,17V14H8V10H16Z"/>
                   </svg>
                   <span>Contas a Pagar</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('fluxo-caixa')" title="Controle de fluxo de caixa">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('fluxo-caixa')" title="Controle de fluxo de caixa">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M3,3V21H21V19H5V3H3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z"/>
                   </svg>
                   <span>Fluxo de Caixa</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('bancos')" title="Conciliação bancária">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('bancos')" title="Conciliação bancária">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M11.5,1L2,6V8H21V6M16,10V17H19V19H5V17H8V10H10V17H14V10M2,20V22H21V20"/>
                   </svg>
                   <span>Conciliação Bancária</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('dre')" title="Demonstrativo de Resultado do Exercício">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('dre')" title="Demonstrativo de Resultado do Exercício">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                   </svg>
@@ -246,25 +246,25 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.fiscal">
-                <div class="nav-subitem" @click="setActiveModule('nfe')" title="Emissão de Nota Fiscal Eletrônica">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('nfe')" title="Emissão de Nota Fiscal Eletrônica">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                   </svg>
                   <span>Nota Fiscal Eletrônica</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('nfce')" title="Nota Fiscal de Consumidor Eletrônica">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('nfce')" title="Nota Fiscal de Consumidor Eletrônica">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z"/>
                   </svg>
                   <span>NFC-e</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('sped')" title="Sistema Público de Escrituração Digital">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('sped')" title="Sistema Público de Escrituração Digital">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4Z"/>
                   </svg>
                   <span>SPED Fiscal</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('impostos')" title="Apuração e controle de impostos">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('impostos')" title="Apuração e controle de impostos">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/>
                   </svg>
@@ -285,25 +285,25 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.rh">
-                <div class="nav-subitem" @click="setActiveModule('funcionarios')" title="Cadastro e gestão de funcionários">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('funcionarios')" title="Cadastro e gestão de funcionários">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
                   </svg>
                   <span>Cadastro de Funcionários</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('folha-pagamento')" title="Processamento da folha de pagamento">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('folha-pagamento')" title="Processamento da folha de pagamento">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9Z"/>
                   </svg>
                   <span>Folha de Pagamento</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('ponto')" title="Controle de ponto eletrônico">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('ponto')" title="Controle de ponto eletrônico">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
                   </svg>
                   <span>Controle de Ponto</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('ferias')" title="Gestão de férias e licenças">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('ferias')" title="Gestão de férias e licenças">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V8H19V19M19,6H5V5H19V6Z"/>
                   </svg>
@@ -319,7 +319,7 @@
                   </svg>
                 </div>
                 <div class="nav-submenu" v-show="expandedGroups.esocial">
-                  <div class="nav-subitem" @click="setActiveModule('esocial-s1000')" title="S-1000 - Informações do Empregador">
+                  <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('esocial-s1000')" title="S-1000 - Informações do Empregador">
                     <svg class="nav-subicon" viewBox="0 0 24 24">
                       <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
                     </svg>
@@ -337,7 +337,7 @@
                     </svg>
                   </div>
                   <div class="nav-submenu" v-show="expandedGroups['esocial-processing']">
-                    <div class="nav-subitem" @click="setActiveModule('esocial-processing')" title="eSocial - Processamento e Envio">
+                    <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('esocial-processing')" title="eSocial - Processamento e Envio">
                       <svg class="nav-subicon" viewBox="0 0 24 24">
                         <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/>
                       </svg>
@@ -345,13 +345,13 @@
                     </div>
                   </div>
                   
-                  <div class="nav-subitem" @click="setActiveModule('esocial-s2200')" title="S-2200 - Cadastramento Inicial do Vínculo e Admissão de Trabalhador">
+                  <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('esocial-s2200')" title="S-2200 - Cadastramento Inicial do Vínculo e Admissão de Trabalhador">
                     <svg class="nav-subicon" viewBox="0 0 24 24">
                       <path d="M16,4C18.21,4 20,5.79 20,8C20,10.21 18.21,12 16,12C13.79,12 12,10.21 12,8C12,5.79 13.79,4 16,4M16,14C18.67,14 24,15.33 24,18V20H8V18C8,15.33 13.33,14 16,14M8,4C10.21,4 12,5.79 12,8C12,10.21 10.21,12 8,12C5.79,12 4,10.21 4,8C4,5.79 5.79,4 8,4M8,14C10.67,14 16,15.33 16,18V20H0V18C0,15.33 5.33,14 8,14Z"/>
                     </svg>
                     <span>S-2200 - Admissão</span>
                   </div>
-                  <div class="nav-subitem" @click="setActiveModule('esocial-eventos')" title="Consultar Eventos eSocial">
+                  <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('esocial-eventos')" title="Consultar Eventos eSocial">
                     <svg class="nav-subicon" viewBox="0 0 24 24">
                       <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                     </svg>
@@ -373,25 +373,25 @@
                 </svg>
               </div>
               <div class="nav-submenu" v-show="expandedGroups.industria">
-                <div class="nav-subitem" @click="setActiveModule('producao')" title="Controle de ordens de produção">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('producao')" title="Controle de ordens de produção">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M17,7H22V17H17V19A1,1 0 0,0 18,20H20V22H16C14.89,22 14,21.1 14,20V19H8V20C8,21.1 7.11,22 6,22H2V20H4A1,1 0 0,0 5,19V5A1,1 0 0,0 4,4H2V2H6C7.11,2 8,2.9 8,4V5H14V4C14,2.9 14.89,2 16,2H20V4H18A1,1 0 0,0 17,5V7M9,6V18H15V6H9Z"/>
                   </svg>
                   <span>Ordens de Produção</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('bom')" title="Lista de materiais e estrutura de produtos">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('bom')" title="Lista de materiais e estrutura de produtos">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z"/>
                   </svg>
                   <span>Lista de Materiais (BOM)</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('qualidade')" title="Controle de qualidade e inspeções">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('qualidade')" title="Controle de qualidade e inspeções">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
                   </svg>
                   <span>Controle de Qualidade</span>
                 </div>
-                <div class="nav-subitem" @click="setActiveModule('manutencao')" title="Manutenção preventiva e corretiva">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('manutencao')" title="Manutenção preventiva e corretiva">
                   <svg class="nav-subicon" viewBox="0 0 24 24">
                     <path d="M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z"/>
                   </svg>
@@ -542,18 +542,36 @@ const toggleSidebar = () => {
 }
 
 const toggleGroup = (group: keyof typeof expandedGroups) => {
+  // Se a sidebar estiver recolhida, expandir ela primeiro
+  if (!sidebarOpen.value) {
+    sidebarOpen.value = true
+  }
   expandedGroups[group] = !expandedGroups[group]
+}
+
+// Função para expandir sidebar quando necessário
+const expandSidebarIfNeeded = () => {
+  if (!sidebarOpen.value) {
+    sidebarOpen.value = true
+  }
 }
 
 const setActiveModule = async (module: string) => {
   try {
+    // Se a sidebar estiver recolhida, expandir ela primeiro
+    if (!sidebarOpen.value) {
+      sidebarOpen.value = true
+    }
+    
     // Verificar se já existe uma aba para este módulo
     const existingTab = tabCache.tabs.value.find(tab => tab.component === module || tab.id === module)
     
     if (existingTab) {
-      // Se a aba já existe, apenas ativar ela
+      // Se a aba já existe, apenas ativar ela e recolher a sidebar
       tabCache.switchToTab(existingTab.id)
       activeModule.value = module
+      // Recolher sidebar automaticamente após ativar aba existente
+      sidebarOpen.value = false
     } else {
       // Buscar componente no sistema de módulos
       const modules = moduleSystem.getAllModules()
@@ -586,6 +604,8 @@ const setActiveModule = async (module: string) => {
             closable: module !== 'dashboard'
           })
           activeModule.value = module
+          // Recolher sidebar automaticamente após criar nova aba
+          sidebarOpen.value = false
         } catch (error) {
           console.error(`Erro ao carregar componente ${module}:`, error)
           // Fallback para placeholder em caso de erro
@@ -597,6 +617,8 @@ const setActiveModule = async (module: string) => {
             closable: module !== 'dashboard'
           })
           activeModule.value = module
+          // Recolher sidebar automaticamente após criar aba de fallback
+          sidebarOpen.value = false
         }
       } else {
         // Para módulos sem componentes específicos, usar placeholder
@@ -608,9 +630,12 @@ const setActiveModule = async (module: string) => {
           closable: module !== 'dashboard'
         })
         activeModule.value = module
+        // Recolher sidebar automaticamente após criar aba placeholder
+        sidebarOpen.value = false
       }
     }
     
+    // Manter comportamento para mobile
     if (window.innerWidth <= 768) {
       sidebarOpen.value = false
     }
@@ -618,6 +643,8 @@ const setActiveModule = async (module: string) => {
     console.error('Erro ao definir módulo ativo:', error)
     // Fallback para dashboard em caso de erro
     activeModule.value = 'dashboard'
+    // Recolher sidebar mesmo em caso de erro
+    sidebarOpen.value = false
   }
 }
 
@@ -962,19 +989,18 @@ onMounted(async () => {
   width: 70px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
-  transform: translateX(-100%);
   transition: all 0.3s ease;
   position: fixed;
-  top: 60px;
+  top: 70px;
   left: 0;
   bottom: 0;
-  z-index: 90;
+  z-index: 999;
   overflow-y: auto;
   overflow-x: hidden;
   box-shadow: var(--shadow-md);
 }
 
-.sidebar:hover {
+.sidebar.sidebar-open {
   width: 280px;
 }
 
@@ -993,7 +1019,7 @@ onMounted(async () => {
   transition: opacity 0.3s ease;
 }
 
-.sidebar:hover .sidebar-header {
+.sidebar.sidebar-open .sidebar-header {
   opacity: 1;
 }
 
@@ -1023,9 +1049,31 @@ onMounted(async () => {
   position: relative;
   justify-content: center;
   user-select: none;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.sidebar:hover .nav-item {
+/* Quando sidebar está recolhida, centralizar ícones perfeitamente */
+.sidebar:not(.sidebar-open) .nav-item {
+  padding: 0.5rem 0;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Ícones centralizados quando sidebar recolhida */
+.sidebar:not(.sidebar-open) .nav-icon {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+}
+
+/* Esconder texto quando sidebar está recolhida */
+.sidebar:not(.sidebar-open) .nav-item span {
+  display: none;
+}
+
+.sidebar.sidebar-open .nav-item {
   justify-content: flex-start;
   padding: 0.75rem 1rem;
 }
@@ -1045,7 +1093,7 @@ onMounted(async () => {
   overflow: hidden;
 }
 
-.sidebar:hover .nav-item span {
+.sidebar.sidebar-open .nav-item span {
   opacity: 1;
   width: auto;
 }
@@ -1072,7 +1120,7 @@ onMounted(async () => {
   position: relative;
 }
 
-.sidebar:hover .nav-group .group-header {
+.sidebar.sidebar-open .nav-group .group-header {
   justify-content: space-between;
 }
 
@@ -1090,7 +1138,7 @@ onMounted(async () => {
   opacity: 0;
 }
 
-.sidebar:hover .expand-icon {
+.sidebar.sidebar-open .expand-icon {
   opacity: 1;
 }
 
@@ -1107,7 +1155,7 @@ onMounted(async () => {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar:hover .nav-submenu {
+.sidebar.sidebar-open .nav-submenu {
   display: block;
   animation: slideDown 0.3s ease-out;
 }
@@ -1176,7 +1224,7 @@ onMounted(async () => {
   flex: 1;
   padding: 0.25rem 0;
   overflow-y: auto;
-  margin-left: 0;
+  margin-left: 70px;
   transition: margin-left 0.3s ease;
 }
 
@@ -1539,11 +1587,13 @@ onMounted(async () => {
   border-bottom: 1px solid var(--border-color);
   padding: 0;
   position: sticky;
-  top: 60px;
+  top: 70px;
   z-index: 90;
   overflow-x: auto;
   overflow-y: hidden;
   box-shadow: var(--shadow-sm);
+  margin-left: 70px;
+  transition: margin-left 0.3s ease;
 }
 
 .tabs-container {
@@ -1616,26 +1666,8 @@ onMounted(async () => {
 /* Responsividade */
 @media (min-width: 769px) {
   .sidebar {
-    position: static;
+    position: fixed;
     transform: translateX(0);
-  }
-  
-  .main-content {
-    margin-left: 70px;
-    transition: margin-left 0.3s ease;
-  }
-  
-  .tabs-bar {
-    margin-left: 70px;
-    transition: margin-left 0.3s ease;
-  }
-  
-  .sidebar:hover + .main-content {
-    margin-left: 280px;
-  }
-  
-  .sidebar:hover ~ .tabs-bar {
-    margin-left: 280px;
   }
 }
 

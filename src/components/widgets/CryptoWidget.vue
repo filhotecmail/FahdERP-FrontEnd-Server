@@ -180,7 +180,7 @@ const cryptoData = ref<CryptoData | null>(null)
 const loading = ref(false)
 const error = ref('')
 const lastUpdate = ref<Date | null>(null)
-let updateInterval: number | null = null
+let updateInterval: NodeJS.Timeout | null = null
 
 const fetchCryptoData = async () => {
   try {

@@ -69,7 +69,8 @@
           <div class="form-group full-width">
             <label>Observações:</label>
             <textarea 
-              v-model="campos.observacoes.value" 
+              :value="String(campos.observacoes.value.value || '')" 
+              @input="campos.observacoes.setValue(($event.target as HTMLTextAreaElement).value)"
               rows="3"
               placeholder="Observações adicionais..."
             ></textarea>
@@ -133,7 +134,7 @@
         </div>
 
         <div class="form-group">
-          <button @click="filters.toggleExpanded()" class="btn btn-outline">
+          <button @click="filters.toggleExpanded?.()" class="btn btn-outline">
             {{ filters.expanded ? 'Recolher' : 'Expandir' }} Filtros
           </button>
         </div>
@@ -151,7 +152,7 @@
             <input v-model="filtroIdadeMax.value" type="number" max="120" />
           </div>
         </div>
-        <button @click="filters.clearFilters()" class="btn btn-warning">
+        <button @click="filters.clearFilters?.()" class="btn btn-warning">
           Limpar Filtros
         </button>
       </div>
@@ -167,7 +168,7 @@
           <input 
             type="checkbox" 
             :checked="selection.selectAll"
-            @change="selection.toggleSelectAll()"
+            @change="selection.toggleSelectAll?.()"
           />
           Selecionar Todos
         </label>
@@ -226,7 +227,7 @@
       <!-- Paginação -->
       <div class="pagination">
         <button 
-          @click="pagination.setPage(pagination.currentPage - 1)"
+          @click="pagination.setPage?.(pagination.currentPage - 1)"
           :disabled="pagination.currentPage === 1"
           class="btn btn-outline"
         >
@@ -239,7 +240,7 @@
         </span>
         
         <button 
-          @click="pagination.setPage(pagination.currentPage + 1)"
+          @click="pagination.setPage?.(pagination.currentPage + 1)"
           :disabled="pagination.currentPage >= totalPaginas"
           class="btn btn-outline"
         >
@@ -248,7 +249,7 @@
         
         <select 
           :value="pagination.itemsPerPage"
-          @change="pagination.setItemsPerPage(Number(($event.target as HTMLSelectElement)?.value || '10'))"
+          @change="pagination.setItemsPerPage?.(Number(($event.target as HTMLSelectElement)?.value || '10'))"
           class="items-per-page"
         >
           <option value="5">5 por página</option>
@@ -271,7 +272,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useFormState } from '@/composables/useFormState'
 
 // Configurar o sistema de estado
@@ -288,19 +289,21 @@ const campos = {
   nome: formState.field('nome', { 
     defaultValue: '', 
     type: 'string',
-    validator: (value: string) => {
-      if (!value.trim()) return 'Nome é obrigatório'
-      if (value.length < 2) return 'Nome deve ter pelo menos 2 caracteres'
+    validator: (value: unknown) => {
+      const str = String(value || '')
+      if (!str.trim()) return 'Nome é obrigatório'
+      if (str.length < 2) return 'Nome deve ter pelo menos 2 caracteres'
       return true
     }
   }),
   email: formState.field('email', { 
     defaultValue: '', 
     type: 'string',
-    validator: (value: string) => {
-      if (!value.trim()) return 'Email é obrigatório'
+    validator: (value: unknown) => {
+      const str = String(value || '')
+      if (!str.trim()) return 'Email é obrigatório'
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(value)) return 'Email inválido'
+      if (!emailRegex.test(str)) return 'Email inválido'
       return true
     }
   }),
@@ -358,8 +361,8 @@ const dadosFiltrados = computed(() => {
   let dados = dadosMockados.value
   
   // Filtro por busca global
-  if (filters.searchTerm) {
-    const termo = filters.searchTerm.toLowerCase()
+  if (filters.value.searchTerm) {
+    const termo = filters.value.searchTerm.toLowerCase()
     dados = dados.filter(item => 
       item.nome.toLowerCase().includes(termo) ||
       item.email.toLowerCase().includes(termo) ||
@@ -369,26 +372,28 @@ const dadosFiltrados = computed(() => {
   
   // Filtro por status
   if (filtroStatus.value) {
-    const ativo = filtroStatus.value === 'ativo'
+    const ativo = String(filtroStatus.value) === 'ativo'
     dados = dados.filter(item => item.ativo === ativo)
   }
   
   // Filtro por idade
-  if (filtroIdadeMin.value > 0) {
-    dados = dados.filter(item => item.idade >= filtroIdadeMin.value)
+  const idadeMin = Number(filtroIdadeMin.value) || 0
+  const idadeMax = Number(filtroIdadeMax.value) || 120
+  if (idadeMin > 0) {
+    dados = dados.filter(item => item.idade >= idadeMin)
   }
-  if (filtroIdadeMax.value < 120) {
-    dados = dados.filter(item => item.idade <= filtroIdadeMax.value)
+  if (idadeMax < 120) {
+    dados = dados.filter(item => item.idade <= idadeMax)
   }
   
   // Ordenação
-  if (filters.sortBy) {
+  if (filters.value.sortBy) {
     dados.sort((a, b) => {
-      const campo = filters.sortBy as keyof typeof a
+      const campo = filters.value.sortBy as keyof typeof a
       const valorA = a[campo]
       const valorB = b[campo]
       
-      if (filters.sortOrder === 'desc') {
+      if (filters.value.sortOrder === 'desc') {
         return valorB > valorA ? 1 : -1
       }
       return valorA > valorB ? 1 : -1
@@ -400,20 +405,20 @@ const dadosFiltrados = computed(() => {
 
 // Dados paginados
 const dadosPaginados = computed(() => {
-  const inicio = (pagination.currentPage - 1) * pagination.itemsPerPage
-  const fim = inicio + pagination.itemsPerPage
+  const inicio = (pagination.value.currentPage - 1) * pagination.value.itemsPerPage
+  const fim = inicio + pagination.value.itemsPerPage
   return dadosFiltrados.value.slice(inicio, fim)
 })
 
 // Total de páginas
 const totalPaginas = computed(() => {
-  return Math.ceil(dadosFiltrados.value.length / pagination.itemsPerPage)
+  return Math.ceil(dadosFiltrados.value.length / pagination.value.itemsPerPage)
 })
 
 // Atualizar total de itens quando dados filtrados mudarem
-computed(() => {
-  pagination.setTotalItems(dadosFiltrados.value.length)
-})
+watch(dadosFiltrados, (newValue: typeof dadosFiltrados.value) => {
+  pagination.value.setTotalItems?.(newValue.length)
+}, { immediate: true })
 
 // Funções
 const salvarFormulario = () => {
@@ -459,11 +464,11 @@ const alterarOrdenacao = (event: Event) => {
   const target = event.target as HTMLSelectElement | null
   if (!target) return
   const [campo, ordem] = target.value.split(':')
-  filters.setSorting(campo, ordem as 'asc' | 'desc')
+  filters.value.setSorting?.(campo, ordem as 'asc' | 'desc')
 }
 
 const toggleItemSelection = (id: number) => {
-  const selecionados = [...selection.selectedItems]
+  const selecionados = [...selection.value.selectedItems]
   const index = selecionados.indexOf(id)
   
   if (index > -1) {
@@ -472,15 +477,15 @@ const toggleItemSelection = (id: number) => {
     selecionados.push(id)
   }
   
-  selection.setSelectedItems(selecionados)
+  selection.value.setSelectedItems?.(selecionados)
 }
 
 const removerSelecionados = () => {
-  if (confirm(`Remover ${selection.selectedItems.length} itens selecionados?`)) {
+  if (confirm(`Remover ${selection.value.selectedItems.length} itens selecionados?`)) {
     dadosMockados.value = dadosMockados.value.filter(
-      item => !selection.selectedItems.includes(item.id)
+      item => !selection.value.selectedItems.includes(item.id)
     )
-    selection.setSelectedItems([])
+    selection.value.setSelectedItems?.([])
   }
 }
 

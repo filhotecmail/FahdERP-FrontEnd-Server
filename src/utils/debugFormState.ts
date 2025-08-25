@@ -32,9 +32,10 @@ export function inspectFormData() {
       console.log('  Campos:', Object.keys(parsed.form?.fields || {}))
       
       // Verificar se há objetos nos valores dos campos
-      Object.entries(parsed.form?.fields || {}).forEach(([fieldName, field]: [string, any]) => {
-        if (typeof field.value === 'object' && field.value !== null) {
-          console.warn(`⚠️  Campo ${fieldName} contém objeto:`, field.value)
+      Object.entries(parsed.form?.fields || {}).forEach(([fieldName, field]) => {
+        const fieldObj = field as { value: unknown }
+        if (typeof fieldObj.value === 'object' && fieldObj.value !== null) {
+          console.warn(`⚠️  Campo ${fieldName} contém objeto:`, fieldObj.value)
         }
       })
       
@@ -59,10 +60,11 @@ export function fixCorruptedFormData() {
       let hasChanges = false
       
       // Corrigir campos com objetos
-      Object.entries(parsed.form?.fields || {}).forEach(([fieldName, field]: [string, any]) => {
-        if (typeof field.value === 'object' && field.value !== null) {
+      Object.entries(parsed.form?.fields || {}).forEach(([fieldName, field]) => {
+        const fieldObj = field as { value: unknown }
+        if (typeof fieldObj.value === 'object' && fieldObj.value !== null) {
           console.log(`🔧 Corrigindo campo ${fieldName} em ${key}`)
-          field.value = '' // Resetar para string vazia
+          fieldObj.value = '' // Resetar para string vazia
           hasChanges = true
         }
       })
@@ -86,7 +88,7 @@ export function fixCorruptedFormData() {
 // Função para adicionar ao console global (para uso no DevTools)
 export function addToGlobalConsole() {
   if (typeof window !== 'undefined') {
-    (window as any).debugFormState = {
+    (window as typeof window & { debugFormState?: object }).debugFormState = {
       clear: clearAllFormData,
       inspect: inspectFormData,
       fix: fixCorruptedFormData

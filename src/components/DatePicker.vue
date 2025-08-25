@@ -200,7 +200,6 @@ const formattedDate = computed(() => {
 const calendarDays = computed(() => {
   const days: CalendarDay[] = []
   const firstDay = new Date(currentYear.value, currentMonth.value, 1)
-  const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0)
   const startDate = new Date(firstDay)
   startDate.setDate(startDate.getDate() - firstDay.getDay())
   

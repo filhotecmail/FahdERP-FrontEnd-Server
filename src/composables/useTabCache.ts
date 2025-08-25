@@ -7,7 +7,7 @@ interface TabItem {
   id: string
   title: string
   component: string
-  props?: Record<string, any>
+  props?: Record<string, unknown>
   closable?: boolean
   cached?: boolean
   lastAccessed?: number
@@ -36,10 +36,9 @@ export function useTabCache(config?: TabCacheConfig) {
   }
   
   const tabConfig = ref({ ...defaultConfig, ...config })
-  const { 
+  const {
     cacheComponent, 
     getCachedComponent, 
-    hasComponent, 
     removeComponent,
     clearCache,
     getCacheStats
@@ -67,7 +66,7 @@ export function useTabCache(config?: TabCacheConfig) {
         ...tab,
         lastAccessed: tab.lastAccessed || Date.now()
       }))
-      activeTabId.value = savedActiveTab
+      activeTabId.value = savedActiveTab as string
     }
   }
   
@@ -97,7 +96,7 @@ export function useTabCache(config?: TabCacheConfig) {
   /**
    * Obtém um componente registrado
    */
-  const getTabComponent = (name: string, props?: Record<string, any>): Component | null => {
+  const getTabComponent = (name: string, props?: Record<string, unknown>): Component | null => {
     try {
       if (!name) return null
       
@@ -351,7 +350,7 @@ export function useTabCache(config?: TabCacheConfig) {
   }
   
   // Watchers para auto-limpeza
-  let cleanupInterval: number | null = null
+  let cleanupInterval: NodeJS.Timeout | null = null
   
   if (tabConfig.value.autoCloseInactive) {
     cleanupInterval = setInterval(cleanupInactiveTabs, 60000) // Verifica a cada minuto

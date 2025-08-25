@@ -1,4 +1,4 @@
-import { computed, ref, watch, onMounted, onUnmounted, getCurrentInstance } from 'vue'
+import { computed, ref, onMounted, onUnmounted, getCurrentInstance, type ComputedRef, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useGlobalFormStateStore, type FormField, type CompleteFormState } from '@/stores/globalFormState'
 
@@ -14,41 +14,71 @@ export interface UseFormStateOptions {
 }
 
 export interface FormFieldConfig {
-  defaultValue?: any
+  defaultValue?: unknown
   type?: FormField['type']
-  validator?: (value: any) => boolean | string
-  transformer?: (value: any) => any
+  validator?: (value: unknown) => boolean | string
+  transformer?: (value: unknown) => unknown
   debounceMs?: number
 }
 
 export interface UseFormStateReturn {
-  // Estado do formulário
+  // Identificação
   formId: string
-  isRegistered: any
-  
-  // Campos do formulário
-  field: <T = any>(name: string, config?: FormFieldConfig) => {
-    value: any
+  isRegistered: ComputedRef<boolean> | Ref<boolean>
+
+  // Campos
+  field: <T = unknown>(name: string, config?: FormFieldConfig) => {
+    value: ComputedRef<T>
     setValue: (value: T) => void
     reset: () => void
-    isValid: any
-    error: any
+    isValid: ComputedRef<boolean>
+    error: ComputedRef<string | null>
   }
-  
-  // Campos reativos
-  fields: any
-  
+
+  // Estado dos campos
+  fields: ComputedRef<Record<string, unknown>>
+
   // Paginação
-  pagination: any
-  
+  pagination: ComputedRef<{
+    currentPage: number
+    itemsPerPage: number
+    totalItems: number
+    totalPages?: number
+    recordsPerPage?: number
+    setPage?: (page: number) => void
+    setCurrentPage?: (page: number) => void
+    setItemsPerPage?: (items: number) => void
+    setTotalItems?: (total: number) => void
+    nextPage?: () => void
+    prevPage?: () => void
+  }>
+
   // Filtros
-  filters: any
-  
+  filters: ComputedRef<{
+    searchTerm: string
+    filters: Record<string, unknown>
+    sortBy: string
+    sortOrder: 'asc' | 'desc'
+    expanded: boolean
+    setSearchTerm?: (term: string) => void
+    setFilter?: (key: string, value: unknown) => void
+    clearFilters?: () => void
+    toggleExpanded?: () => void
+    setSorting?: (by: string, order?: 'asc' | 'desc') => void
+  }>
+
   // Seleção
-  selection: any
-  
+  selection: ComputedRef<{
+    selectedItems: unknown[]
+    selectAll: boolean
+    setSelectedItems?: (items: unknown[]) => void
+    toggleSelectAll?: () => void
+    selectItem?: (item: unknown) => void
+    deselectItem?: (item: unknown) => void
+  }>
+
   // UI
-  ui: any
+  ui: ComputedRef<Record<string, unknown>>
   
   // Métodos de controle
   save: () => void
@@ -59,18 +89,18 @@ export interface UseFormStateReturn {
   redo: () => boolean
   
   // Estado e estatísticas
-  isDirty: any
-  lastUpdated: any
-  version: any
+  isDirty: ComputedRef<boolean>
+  lastUpdated: ComputedRef<Date | null>
+  version: ComputedRef<number>
   
   // Métodos utilitários
-  exportState: () => any
-  importState: (state: any) => void
+  exportState: () => CompleteFormState | null
+  importState: (state: CompleteFormState) => void
 }
 
 // Composable principal
 // Função para sanitizar valores e evitar objetos nos campos
-function sanitizeValue(value: any, type: FormField['type'] = 'string'): any {
+function sanitizeValue(value: unknown, type: FormField['type'] = 'string'): unknown {
   // Se o valor é null ou undefined, retorna o valor padrão baseado no tipo
   if (value === null || value === undefined) {
     switch (type) {
@@ -152,7 +182,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
   const currentState = computed(() => store.getFormState(formId))
   
   // Função para criar campo reativo
-  function field<T = any>(name: string, config: FormFieldConfig = {}) {
+  function field<T = unknown>(name: string, config: FormFieldConfig = {}) {
     // Salvar configuração do campo
     fieldConfigs.value[name] = config
     
@@ -160,21 +190,21 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
     const value = computed({
       get(): T {
         const state = currentState.value
-        if (!state) return sanitizeValue(config.defaultValue, config.type)
+        if (!state) return sanitizeValue(config.defaultValue, config.type) as T
         
         const field = state.form.fields[name]
-        if (!field) return sanitizeValue(config.defaultValue, config.type)
+        if (!field) return sanitizeValue(config.defaultValue, config.type) as T
         
         // Sanitizar o valor lido para corrigir dados corrompidos
         const sanitizedValue = sanitizeValue(field.value, config.type)
-        return config.transformer ? config.transformer(sanitizedValue) : sanitizedValue
+        return config.transformer ? config.transformer(sanitizedValue) as T : sanitizedValue as T
       },
       set(newValue: T) {
         if (!isRegistered.value) registerForm()
         
         // Sanitizar o valor antes de aplicar transformações
         const sanitizedValue = sanitizeValue(newValue, config.type)
-        const finalValue = config.transformer ? config.transformer(sanitizedValue) : sanitizedValue
+        const finalValue = config.transformer ? config.transformer(sanitizedValue) as T : sanitizedValue as T
         
         // Debounce se configurado
         if (config.debounceMs && config.debounceMs > 0) {
@@ -208,7 +238,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
     return {
       value,
       setValue: (newValue: T) => { value.value = newValue },
-      reset: () => { value.value = config.defaultValue },
+      reset: () => { value.value = config.defaultValue as T },
       isValid,
       error
     }
@@ -219,7 +249,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
     const state = currentState.value
     if (!state) return {}
     
-    const result: Record<string, any> = {}
+    const result: Record<string, unknown> = {}
     Object.entries(state.form.fields).forEach(([name, field]) => {
       const config = fieldConfigs.value[name]
       result[name] = config?.transformer ? config.transformer(field.value) : field.value
@@ -272,10 +302,10 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
         if (!isRegistered.value) registerForm()
         store.updateFilters(formId, { searchTerm: term })
       },
-      setFilter: (key: string, value: any) => {
+      setFilter: (key: string, value: unknown) => {
         if (!isRegistered.value) registerForm()
         const currentFilters = { ...filt.filters }
-        currentFilters[key] = value
+        currentFilters[key] = { value }
         store.updateFilters(formId, { filters: currentFilters })
       },
       clearFilters: () => {
@@ -308,7 +338,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
     
     return {
       ...sel,
-      setSelectedItems: (items: any[]) => {
+      setSelectedItems: (items: unknown[]) => {
         if (!isRegistered.value) registerForm()
         store.updateSelection(formId, { selectedItems: items })
       },
@@ -316,7 +346,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
         if (!isRegistered.value) registerForm()
         store.updateSelection(formId, { selectAll: !sel.selectAll })
       },
-      selectItem: (item: any) => {
+      selectItem: (item: unknown) => {
         if (!isRegistered.value) registerForm()
         const items = [...sel.selectedItems]
         if (!items.find(i => JSON.stringify(i) === JSON.stringify(item))) {
@@ -324,7 +354,7 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
           store.updateSelection(formId, { selectedItems: items })
         }
       },
-      deselectItem: (item: any) => {
+      deselectItem: (item: unknown) => {
         if (!isRegistered.value) registerForm()
         const items = sel.selectedItems.filter(i => JSON.stringify(i) !== JSON.stringify(item))
         store.updateSelection(formId, { selectedItems: items })
@@ -467,11 +497,11 @@ export function useFormState(options: UseFormStateOptions = {}): UseFormStateRet
 }
 
 // Composable simplificado para casos básicos
-export function useSimpleFormState(fields: Record<string, any> = {}) {
+export function useSimpleFormState(fields: Record<string, unknown> = {}) {
   const formState = useFormState()
   
   // Criar campos reativos automaticamente
-  const reactiveFields: Record<string, any> = {}
+  const reactiveFields: Record<string, unknown> = {}
   
   Object.entries(fields).forEach(([name, defaultValue]) => {
     const fieldType = typeof defaultValue === 'number' ? 'number' : 
@@ -494,7 +524,7 @@ export function useSimpleFormState(fields: Record<string, any> = {}) {
 }
 
 // Hook para formulários de lista/tabela
-export function useListFormState<T = any>(options: UseFormStateOptions = {}) {
+export function useListFormState<T = unknown>(options: UseFormStateOptions = {}) {
   const formState = useFormState(options)
   
   // Campos específicos para listas

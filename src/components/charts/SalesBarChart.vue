@@ -146,8 +146,8 @@ const chartOptions = computed(() => {
         cornerRadius: 8,
         displayColors: true,
         callbacks: {
-          label: function(context: any) {
-            const value = context.parsed.y
+          label: function(context: unknown) {
+            const value = (context as { parsed: { y: number } }).parsed.y
             return `Vendas: R$ ${value.toLocaleString('pt-BR')}`
           }
         }
@@ -177,8 +177,9 @@ const chartOptions = computed(() => {
           font: {
             size: 11
           },
-          callback: function(value: any) {
-            return 'R$ ' + value.toLocaleString('pt-BR')
+          callback: function(value: unknown) {
+             const numValue = value as number
+             return 'R$ ' + numValue.toLocaleString('pt-BR')
           }
         },
         beginAtZero: true

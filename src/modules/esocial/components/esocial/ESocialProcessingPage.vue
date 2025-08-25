@@ -612,15 +612,15 @@ const processSelectedData = async () => {
 
 // Watcher para resetar paginação quando filtros são alterados
 watchEffect(() => {
-  // Observa mudanças nos filtros avançados
-  void(advancedFilters.value.admissaoInicio);
-  void(advancedFilters.value.admissaoFim);
-  void(advancedFilters.value.tipoContrato);
-  void(advancedFilters.value.departamento);
-  void(advancedFilters.value.situacao);
+  // Observa mudanças nos filtros avançados e reseta paginação
+  const hasFilters = advancedFilters.value.admissaoInicio || 
+                    advancedFilters.value.admissaoFim || 
+                    advancedFilters.value.tipoContrato || 
+                    advancedFilters.value.departamento || 
+                    advancedFilters.value.situacao
   
   // Reseta para primeira página quando filtros mudam (exceto na primeira execução)
-  if (currentProcessingPage.value > 1) {
+  if (currentProcessingPage.value > 1 && hasFilters) {
     currentProcessingPage.value = 1
   }
 })

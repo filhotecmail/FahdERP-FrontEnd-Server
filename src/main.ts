@@ -7,15 +7,27 @@ import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
 import App from './App.vue'
-import router from './router'
+import router, { registerModuleRoutes } from './router'
 import { useThemeStore } from './stores/theme'
 import { FormStatePlugin } from './plugins/formStatePlugin'
 import { addToGlobalConsole } from './utils/debugFormState'
+import { ModuleSystemPlugin, moduleSystem } from './modules/core/moduleSystem'
+import esocialModule from './modules/esocial'
 
 const app = createApp(App)
 const pinia = createPinia()
 
 app.use(pinia)
+
+// Registrar módulos antes do router
+moduleSystem.registerModule(esocialModule)
+
+// Configurar sistema de módulos
+app.use(ModuleSystemPlugin, { router })
+
+// Registrar rotas dos módulos
+registerModuleRoutes()
+
 app.use(router)
 app.use(FormStatePlugin, {
   enablePersistence: true,

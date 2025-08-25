@@ -168,7 +168,13 @@ export const FormStatePlugin = {
       return id ? globalStore.getFormState(id) : null
     }
     
-    app.config.globalProperties.$updateFormState = (updates: any, formId?: string) => {
+    app.config.globalProperties.$updateFormState = (updates: {
+      fields?: Record<string, { value: unknown, type?: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date' }>,
+      pagination?: Partial<{ currentPage: number, itemsPerPage: number, totalItems: number, recordsPerPage: number }>,
+      filters?: Partial<{ searchTerm: string, filters: Record<string, { value: unknown }>, expanded: boolean, sortBy: string, sortOrder: 'asc' | 'desc' }>,
+      selection?: Partial<{ selectedItems: unknown[], selectAll: boolean }>,
+      ui?: Partial<{ activeTab: string, sidebarCollapsed: boolean, modalStates: Record<string, boolean>, loadingStates: Record<string, boolean> }>
+    }, formId?: string) => {
       const id = formId || app.config.globalProperties._formStateId
       if (id && globalStore.formStates[id]) {
         // Atualizar campos se fornecidos

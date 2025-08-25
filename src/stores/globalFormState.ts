@@ -3,9 +3,9 @@ import { ref, reactive, computed } from 'vue'
 
 // Tipos para o sistema global de formulários
 export interface FormField {
-  value: any
+  value: unknown
   type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date'
-  defaultValue?: any
+  defaultValue?: unknown
 }
 
 export interface FormState {
@@ -27,14 +27,14 @@ export interface PaginationState {
 
 export interface FilterState {
   searchTerm: string
-  filters: Record<string, any>
+  filters: Record<string, { value: unknown }>
   expanded: boolean
   sortBy: string
   sortOrder: 'asc' | 'desc'
 }
 
 export interface SelectionState {
-  selectedItems: any[]
+  selectedItems: unknown[]
   selectAll: boolean
 }
 
@@ -150,7 +150,7 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
   }
 
   // Atualizar campo específico
-  function updateField(formId: string, fieldName: string, value: any, type: FormField['type'] = 'string') {
+  function updateField(formId: string, fieldName: string, value: unknown, type: FormField['type'] = 'string') {
     if (!formStates.value[formId]) return
     
     const field: FormField = {
@@ -173,7 +173,7 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
   }
 
   // Atualizar múltiplos campos
-  function updateFields(formId: string, fields: Record<string, { value: any, type?: FormField['type'] }>) {
+  function updateFields(formId: string, fields: Record<string, { value: unknown, type?: FormField['type'] }>) {
     if (!formStates.value[formId]) return
     
     Object.entries(fields).forEach(([fieldName, fieldData]) => {
@@ -376,7 +376,7 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
   }
 
   // Importar estado de backup
-  function importState(backup: any) {
+  function importState(backup: { formStates?: Record<string, CompleteFormState> }) {
     if (backup.formStates) {
       formStates.value = backup.formStates
       // Reconstruir histórico

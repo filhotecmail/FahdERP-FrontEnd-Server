@@ -358,7 +358,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -374,7 +374,7 @@ import {
 import ESocialCardHeading from '../components/ESocialCardHeading.vue'
 import { useESocialFilters } from '../composables/useESocialFilters'
 import { useESocialProcessing } from '../composables/useESocialProcessing'
-import { mockData, type ProcessingItem } from '../mock/esocialProcessingData'
+import { mockData } from '../mock/esocialProcessingData'
 import { timeSeriesData } from '../mock/s2200XmlMock'
 import { useThemeStore } from '@/stores/theme'
 
@@ -401,15 +401,15 @@ const {
   matriculaFilter,
   matriculaFilterError,
   statusFilter,
-  statusFilterError,
+  // statusFilterError, // Removido - não utilizado
   eventoFilter,
-  eventoFilterError,
+  // eventoFilterError, // Removido - não utilizado
   dataInicioFilter,
-  dataInicioFilterError,
+  // dataInicioFilterError, // Removido - não utilizado
   dataFimFilter,
-  dataFimFilterError,
+  // dataFimFilterError, // Removido - não utilizado
   searchFilter,
-  searchFilterError,
+  // searchFilterError, // Removido - não utilizado
   // Additional states
   statusFilterRadio,
   filtersExpanded,
@@ -419,8 +419,8 @@ const {
   formatFilterCPF,
   applyFilters,
   clearFilters,
-  toggleFilters,
-  getItemVisualStatus
+  toggleFilters
+  // getItemVisualStatus // Removido - não utilizado
 } = useESocialFilters(mockData)
 
 const {
@@ -451,8 +451,8 @@ const {
   // Funções de formatação e estilo
   getRowProcessingClass,
   formatDateTime,
-  formatCPFDisplay,
-  getStatusLabel
+  formatCPFDisplay
+  // getStatusLabel // Removido - não utilizado
 } = useESocialProcessing(mockData)
 
 // Dados computados para paginação
@@ -580,9 +580,10 @@ const chartOptions = computed(() => {
         cornerRadius: 8,
         displayColors: true,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: { parsed: { y: number }, dataset: { label?: string } }) {
             const value = context.parsed.y
-            return `${context.dataset.label}: ${value.toLocaleString('pt-BR')}`
+            const label = context.dataset.label || ''
+            return `${label}: ${value.toLocaleString('pt-BR')}`
           }
         }
       }
@@ -610,7 +611,7 @@ const chartOptions = computed(() => {
           font: {
             size: 11
           },
-          callback: function(value: any) {
+          callback: function(value: string | number) {
             return value.toLocaleString('pt-BR')
           }
         },
@@ -629,7 +630,7 @@ const chartOptions = computed(() => {
         hoverRadius: 8
       }
     }
-  } as const
+  }
 })
 
 // Lifecycle

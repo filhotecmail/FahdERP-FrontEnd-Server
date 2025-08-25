@@ -131,8 +131,8 @@ const chartOptions = computed(() => {
           },
           usePointStyle: true,
           padding: 15,
-          generateLabels: function(chart: any) {
-            const data = chart.data
+          generateLabels: function(chart: unknown) {
+            const data = (chart as { data: { labels: string[]; datasets: Array<{ data: number[]; backgroundColor: string[]; borderColor: string[]; borderWidth: number }> } }).data
             if (data.labels.length && data.datasets.length) {
               return data.labels.map((label: string, i: number) => {
                 const dataset = data.datasets[0]
@@ -163,10 +163,10 @@ const chartOptions = computed(() => {
          cornerRadius: 8,
          displayColors: true,
          callbacks: {
-           label: function(context: any) {
-             const label = context.label || ''
-             const value = context.parsed
-             const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0)
+           label: function(context: unknown) {
+             const label = (context as { label: string; parsed: number; dataset: { data: number[] } }).label || ''
+             const value = (context as { label: string; parsed: number; dataset: { data: number[] } }).parsed
+             const total = (context as { label: string; parsed: number; dataset: { data: number[] } }).dataset.data.reduce((a: number, b: number) => a + b, 0)
              const percentage = ((value / total) * 100).toFixed(1)
              return `${label}: ${percentage}%`
            }

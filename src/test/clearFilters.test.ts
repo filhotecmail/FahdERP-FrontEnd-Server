@@ -15,7 +15,7 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
     // Simula a função clearFilters ANTES da correção
     const clearFiltersProblematic = () => {
       const resetResult = filterWithProblematicReset.reset()
-      filterWithProblematicReset.value.value = resetResult as any
+      filterWithProblematicReset.value.value = resetResult as unknown as string
     }
     
     // Executa a função problemática
@@ -59,7 +59,7 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
     }
     
     // Simula a lógica de sanitização do onMounted
-    const sanitizeFilters = (filters: any) => {
+    const sanitizeFilters = (filters: Record<string, { value: unknown }>) => {
       Object.keys(filters).forEach(key => {
         const filter = filters[key]
         if (typeof filter.value !== 'string') {
@@ -74,7 +74,7 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
     
     // Verifica se todos os valores foram corrigidos
     Object.keys(corruptedFilters).forEach(key => {
-      const filter = (corruptedFilters as any)[key]
+      const filter = (corruptedFilters as Record<string, { value: unknown }>)[key]
       expect(filter.value).toBe('')
       expect(typeof filter.value).toBe('string')
       expect(filter.value).not.toBe('[object Object]')
@@ -98,7 +98,7 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
       
       // Detecta e corrige valores corrompidos
       Object.keys(state.filters).forEach(key => {
-        const filter = (state.filters as any)[key]
+        const filter = (state.filters as Record<string, { value: unknown }>)[key]
         if (typeof filter.value !== 'string') {
           filter.value = '' // Sanitização
         }
@@ -108,9 +108,9 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
     }
     
     // Simula clearFilters corrigido
-    const clearFiltersFixed = (filters: any) => {
+    const clearFiltersFixed = (filters: Record<string, { value: unknown }>) => {
       Object.keys(filters).forEach(key => {
-        (filters as any)[key].value = '' // Atribuição direta
+        (filters as Record<string, { value: unknown }>)[key].value = '' // Atribuição direta
       })
     }
     
@@ -120,7 +120,7 @@ describe('Teste da função clearFilters - Problema [object Object]', () => {
     
     // Verifica o resultado final
     Object.keys(sanitizedState.filters).forEach(key => {
-      const filter = (sanitizedState.filters as any)[key]
+      const filter = (sanitizedState.filters as Record<string, { value: unknown }>)[key]
       expect(filter.value).toBe('')
       expect(typeof filter.value).toBe('string')
       expect(filter.value).not.toBe('[object Object]')

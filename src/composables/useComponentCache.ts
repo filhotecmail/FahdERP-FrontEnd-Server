@@ -3,7 +3,7 @@ import { ref, shallowRef, markRaw, type Component } from 'vue'
 // Interface para definir um item do cache
 interface CacheItem {
   component: Component
-  props?: Record<string, any>
+  props?: Record<string, unknown>
   timestamp: number
   accessCount: number
 }
@@ -36,7 +36,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
   /**
    * Gera uma chave única para o cache baseada no nome do componente e props
    */
-  const generateCacheKey = (componentName: string, props?: Record<string, any>): string => {
+  const generateCacheKey = (componentName: string, props?: Record<string, unknown>): string => {
     const propsKey = props ? JSON.stringify(props, Object.keys(props).sort()) : ''
     return `${componentName}:${propsKey}`
   }
@@ -53,7 +53,6 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
    * Remove itens expirados do cache
    */
   const cleanExpiredItems = (): void => {
-    const now = Date.now()
     for (const [key, item] of componentCache.entries()) {
       if (!isValidCacheItem(item)) {
         componentCache.delete(key)
@@ -91,7 +90,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
   const cacheComponent = (
     componentName: string, 
     component: Component, 
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ): void => {
     cleanExpiredItems()
     evictLRU()
@@ -112,7 +111,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
    */
   const getCachedComponent = (
     componentName: string, 
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ): Component | null => {
     const key = generateCacheKey(componentName, props)
     const item = componentCache.get(key)
@@ -134,7 +133,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
    */
   const hasComponent = (
     componentName: string, 
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ): boolean => {
     const key = generateCacheKey(componentName, props)
     const item = componentCache.get(key)
@@ -146,7 +145,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
    */
   const removeComponent = (
     componentName: string, 
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ): boolean => {
     const key = generateCacheKey(componentName, props)
     return componentCache.delete(key)
@@ -184,7 +183,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
   const useCachedComponent = (
     componentName: string,
     componentFactory: () => Component,
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ) => {
     const cachedComponent = shallowRef<Component | null>(null)
     
@@ -224,7 +223,7 @@ export function useComponentCache(config?: Partial<CacheConfig>) {
 export function useAutoCacheCleanup(intervalMs: number = 60000) {
   const { cleanExpiredItems } = useComponentCache()
   
-  let cleanupInterval: number | null = null
+  let cleanupInterval: NodeJS.Timeout | null = null
   
   const startCleanup = () => {
     if (cleanupInterval) return

@@ -208,10 +208,7 @@ interface ForecastDay {
   }
 }
 
-interface WeatherForecast {
-  current: WeatherData
-  forecast: ForecastDay[]
-}
+
 
 const weatherData = ref<WeatherData | null>(null)
 const forecastData = ref<ForecastDay[]>([])
@@ -220,8 +217,7 @@ const error = ref('')
 const locationPermission = ref(false)
 let updateInterval: NodeJS.Timeout | null = null
 
-// API Key gratuita do OpenWeatherMap (substitua pela sua)
-const API_KEY = 'demo_key' // Você precisa se registrar em openweathermap.org para obter uma chave gratuita
+
 
 // Função para obter nome da cidade através de geocodificação reversa
 const getCityFromCoordinates = async (lat: number, lon: number): Promise<string> => {

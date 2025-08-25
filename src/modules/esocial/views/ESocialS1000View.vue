@@ -309,7 +309,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { esocialTables, getOpcoesSelect } from '@/data/esocial-tables.js'
+import { getOpcoesSelect } from '@/data/esocial-tables.js'
 import ESocialCardHeading from '@/components/ESocialCardHeading.vue'
 import { useTabState } from '@/composables/useTabState'
 
@@ -406,7 +406,7 @@ const handleSubmit = async () => {
     const formValues = Object.keys(formData).reduce((acc, key) => {
       acc[key] = formData[key as keyof typeof formData].value
       return acc
-    }, {} as Record<string, any>)
+    }, {} as Record<string, unknown>)
     
     console.log('Dados do S-1000:', formValues)
     

@@ -12,8 +12,8 @@ export interface FormIdentifier {
   hash: string
   metadata: {
     routeName?: string
-    routeParams: Record<string, any>
-    routeQuery: Record<string, any>
+    routeParams: Record<string, string | string[]>
+    routeQuery: Record<string, string | string[]>
     componentName: string
     timestamp: number
   }
@@ -58,7 +58,12 @@ export class FormIdentifierManager {
     const routePath = route.path
     const routeName = route.name?.toString() || 'unknown'
     const routeParams = includeParams ? route.params : {}
-    const routeQuery = includeQuery ? route.query : {}
+    const routeQuery = includeQuery ? Object.fromEntries(
+      Object.entries(route.query).map(([key, value]) => [
+        key,
+        Array.isArray(value) ? value.filter(v => v !== null) : (value ?? '')
+      ])
+    ) : {}
     
     // Extrair informações do componente
     const componentName = this.extractComponentName(componentInstance)
@@ -162,7 +167,7 @@ export class FormIdentifierManager {
     if (!instance) return 'UnknownComponent'
     
     // Tentar diferentes formas de obter o nome do componente
-    const type = instance.type as any
+    const type = instance.type as { __name?: string; name?: string; __file?: string }
     
     return (
       type.__name ||
@@ -308,7 +313,7 @@ export function useFormIdentifier(
 }
 
 // Função para migração de IDs antigos
-export function migrateFormId(oldId: string, newOptions: FormIdentifierOptions = {}): string {
+export function migrateFormId(oldId: string): string {
   // Lógica para migrar IDs antigos para o novo formato
   // Pode ser usado para compatibilidade com sistemas existentes
   

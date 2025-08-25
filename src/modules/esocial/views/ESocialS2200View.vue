@@ -421,7 +421,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { esocialTables, getOpcoesSelect } from '@/data/esocial-tables.js'
+// import { esocialTables, getOpcoesSelect } from '@/data/esocial-tables.js' // Removido - não utilizado
 import ESocialCardHeading from '@/components/ESocialCardHeading.vue'
 import { useTabState } from '@/composables/useTabState'
 

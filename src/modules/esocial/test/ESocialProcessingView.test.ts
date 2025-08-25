@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { ref, computed } from 'vue'
-import { createPinia, setActivePinia } from 'pinia'
+import ESocialProcessingView from '../views/ESocialProcessingView.vue'
 
-// Mock do useFormState
+// Mock do composable useFormState
 vi.mock('../composables/useFormState', () => ({
   useFormState: () => ({
     field: (name: string, config: { defaultValue?: unknown }) => ({
@@ -39,17 +39,10 @@ vi.mock('vue-router', () => ({
   })
 }))
 
-import ESocialProcessingView from '../modules/esocial/views/ESocialProcessingView.vue'
-
 describe('ESocialProcessingView', () => {
   let wrapper: ReturnType<typeof mount>
-  let pinia: ReturnType<typeof createPinia>
 
   beforeEach(() => {
-    // Configura Pinia para os testes
-    pinia = createPinia()
-    setActivePinia(pinia)
-    
     // Limpa os mocks antes de cada teste
     vi.clearAllMocks()
     
@@ -67,11 +60,7 @@ describe('ESocialProcessingView', () => {
   })
 
   it('deve renderizar o componente sem erros', () => {
-    wrapper = mount(ESocialProcessingView, {
-      global: {
-        plugins: [pinia]
-      }
-    })
+    wrapper = mount(ESocialProcessingView)
     expect(wrapper.exists()).toBe(true)
   })
 

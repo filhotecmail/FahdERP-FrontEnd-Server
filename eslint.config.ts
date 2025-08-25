@@ -13,7 +13,22 @@ export default defineConfigWithVueTs(
     files: ['**/*.{ts,mts,tsx,vue}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/node_modules/**',
+    '**/dist/**', 
+    '**/dist-ssr/**', 
+    '**/coverage/**',
+    '**/build/**',
+    '**/public/**',
+    '**/vendors/**',
+    '**/lib/**',
+    '**/libs/**',
+    '**/third-party/**',
+    '**/*.min.js',
+    '**/*.bundle.js',
+    '**/generated/**',
+    '**/auto-generated/**'
+  ]),
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,

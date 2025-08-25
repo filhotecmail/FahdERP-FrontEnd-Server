@@ -1,8 +1,8 @@
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 
 // Interface para definir o estado de uma aba
 interface TabState {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // Armazenamento global do estado das abas
@@ -21,21 +21,21 @@ export function useTabState(tabId: string) {
   /**
    * Salvar estado de um campo específico
    */
-  const saveFieldState = (fieldName: string, value: any) => {
+  const saveFieldState = (fieldName: string, value: unknown) => {
     tabStates[tabId][fieldName] = value
   }
 
   /**
    * Recuperar estado de um campo específico
    */
-  const getFieldState = (fieldName: string, defaultValue: any = '') => {
+  const getFieldState = (fieldName: string, defaultValue: unknown = '') => {
     return tabStates[tabId][fieldName] ?? defaultValue
   }
 
   /**
    * Salvar estado completo do formulário
    */
-  const saveFormState = (formData: Record<string, any>) => {
+  const saveFormState = (formData: Record<string, unknown>) => {
     Object.keys(formData).forEach(key => {
       tabStates[tabId][key] = formData[key]
     })
@@ -83,7 +83,7 @@ export function useTabState(tabId: string) {
 /**
  * Hook para auto-salvar estado de campos reativos
  */
-export function useAutoSaveState(tabId: string, formData: Record<string, any>) {
+export function useAutoSaveState(tabId: string, formData: Record<string, unknown>) {
   const { saveFieldState, getFieldState } = useTabState(tabId)
 
   // Restaurar estado salvo nos campos

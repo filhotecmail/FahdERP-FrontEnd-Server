@@ -307,17 +307,11 @@
                     </svg>
                   </div>
                   <div class="nav-submenu" v-show="expandedGroups['esocial-processing']">
-                    <div class="nav-subitem" @click="setActiveModule('esocial-s2200-processing')" title="S-2200 - Processamento de Admissões">
+                    <div class="nav-subitem" @click="setActiveModule('esocial-processing')" title="eSocial - Processamento e Envio">
                       <svg class="nav-subicon" viewBox="0 0 24 24">
-                        <path d="M16,4C18.21,4 20,5.79 20,8C20,10.21 18.21,12 16,12C13.79,12 12,10.21 12,8C12,5.79 13.79,4 16,4M16,14C18.67,14 24,15.33 24,18V20H8V18C8,15.33 13.33,14 16,14M8,4C10.21,4 12,5.79 12,8C12,10.21 10.21,12 8,12C5.79,12 4,10.21 4,8C4,5.79 5.79,4 8,4M8,14C10.67,14 16,15.33 16,18V20H0V18C0,15.33 5.33,14 8,14Z"/>
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/>
                       </svg>
-                      <span>Módulo S2200</span>
-                    </div>
-                    <div class="nav-subitem" @click="setActiveModule('esocial-s2300-processing')" title="S-2300 - Processamento de Alterações">
-                      <svg class="nav-subicon" viewBox="0 0 24 24">
-                        <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7.27C13.6,7.61 14,8.26 14,9A2,2 0 0,1 12,11A2,2 0 0,1 10,9C10,8.26 10.4,7.61 11,7.27V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M12,6A1,1 0 0,0 11,7A1,1 0 0,0 12,8A1,1 0 0,0 13,7A1,1 0 0,0 12,6M12,10A1,1 0 0,0 11,11A1,1 0 0,0 12,12A1,1 0 0,0 13,11A1,1 0 0,0 12,10Z"/>
-                      </svg>
-                      <span>Módulo S2300</span>
+                      <span>Processamento e Envio</span>
                     </div>
                   </div>
                   
@@ -410,22 +404,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import SalesLineChart from '@/components/charts/SalesLineChart.vue'
-import SalesBarChart from '@/components/charts/SalesBarChart.vue'
-import SalesPieChart from '@/components/charts/SalesPieChart.vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
-import WeatherWidget from '@/components/widgets/WeatherWidget.vue'
-import CurrencyWidget from '@/components/widgets/CurrencyWidget.vue'
-import CryptoWidget from '@/components/widgets/CryptoWidget.vue'
-import DatePicker from '@/components/DatePicker.vue'
-import ESocialS1000View from '@/views/ESocialS1000View.vue'
-import ESocialS2200View from '@/views/ESocialS2200View.vue'
-import ESocialProcessingView from '@/views/ESocialProcessingView.vue'
 import DashboardComponent from '@/components/DashboardComponent.vue'
 import { useThemeStore } from '@/stores/theme'
 import { useTabCache } from '@/composables/useTabCache'
+import { moduleSystem } from '@/modules/core/moduleSystem'
 
 const router = useRouter()
 const themeStore = useThemeStore()
@@ -434,7 +419,6 @@ const themeStore = useThemeStore()
 const sidebarOpen = ref(false)
 const activeModule = ref('dashboard')
 const searchQuery = ref('')
-const selectedDate = ref(new Date().toISOString().split('T')[0])
 
 // Sistema de abas com cache
 const tabCache = useTabCache({
@@ -446,9 +430,30 @@ const tabCache = useTabCache({
 
 // Registrar componentes das abas
 tabCache.registerTabComponent('dashboard', DashboardComponent)
-tabCache.registerTabComponent('ESocialS1000View', ESocialS1000View)
-tabCache.registerTabComponent('ESocialS2200View', ESocialS2200View)
-tabCache.registerTabComponent('ESocialProcessingView', ESocialProcessingView)
+
+// Registrar componentes dos módulos dinamicamente
+const registerModuleComponents = async () => {
+  const modules = moduleSystem.getAllModules()
+  for (const module of modules) {
+    if (module.components) {
+      for (const [name, componentFactory] of Object.entries(module.components)) {
+        try {
+          // Resolver componente lazy loading
+          const component = typeof componentFactory === 'function' 
+            ? await componentFactory()
+            : componentFactory
+          
+          // Registrar o componente resolvido
+          tabCache.registerTabComponent(name, component.default || component)
+        } catch (error) {
+          console.error(`Erro ao carregar componente ${name}:`, error)
+        }
+      }
+    }
+  }
+}
+
+// Registrar componentes dos módulos será feito no onMounted
 
 // Grupos expandidos no menu
 const expandedGroups = reactive({
@@ -462,52 +467,9 @@ const expandedGroups = reactive({
   industria: false
 })
 
-// Métricas do dashboard
-const dailyMetrics = reactive({
-  sales: 45780.50,
-  productsSold: 127,
-  profitMargin: 23.8,
-  revenue: 10890.25
-})
+// Métricas e dados removidos - não utilizados
 
-// Dados semanais para o gráfico
-const weeklyData = ref([
-  { day: 'Seg', value: 32450, percentage: 65 },
-  { day: 'Ter', value: 28900, percentage: 58 },
-  { day: 'Qua', value: 41200, percentage: 82 },
-  { day: 'Qui', value: 38750, percentage: 77 },
-  { day: 'Sex', value: 45780, percentage: 92 },
-  { day: 'Sáb', value: 52100, percentage: 100 },
-  { day: 'Dom', value: 29800, percentage: 60 }
-])
-
-// Compromissos do dia
-const todayAppointments = ref([
-  {
-    id: 1,
-    time: '09:00',
-    title: 'Reunião com Cliente ABC',
-    client: 'João Silva',
-    status: 'confirmed',
-    statusText: 'Confirmado'
-  },
-  {
-    id: 2,
-    time: '14:30',
-    title: 'Apresentação de Proposta',
-    client: 'Empresa XYZ Ltda',
-    status: 'pending',
-    statusText: 'Pendente'
-  },
-  {
-    id: 3,
-    time: '16:00',
-    title: 'Follow-up Vendas',
-    client: 'Maria Santos',
-    status: 'completed',
-    statusText: 'Concluído'
-  }
-])
+// Compromissos removidos - não utilizados
 
 // Funções
 const toggleSidebar = () => {
@@ -518,7 +480,7 @@ const toggleSidebar = () => {
     if (!sidebarOpen.value && expandedGroups) {
       Object.keys(expandedGroups).forEach(key => {
         if (expandedGroups && key in expandedGroups) {
-          (expandedGroups as any)[key] = false
+          (expandedGroups as Record<string, boolean>)[key] = false
         }
       })
     }
@@ -533,35 +495,68 @@ const toggleGroup = (group: keyof typeof expandedGroups) => {
 
 const setActiveModule = async (module: string) => {
   try {
-    // Verificar se a aba já existe
+    // Verificar se já existe uma aba para este módulo
     const existingTab = tabCache.tabs.value.find(tab => tab.component === module || tab.id === module)
     
     if (existingTab) {
-      // Se a aba já existe, apenas ativá-la
+      // Se a aba já existe, apenas ativar ela
       tabCache.switchToTab(existingTab.id)
       activeModule.value = module
     } else {
-      // Criar nova aba
-      const tabTitle = getModuleTitle(module)
-      let componentName = 'dashboard'
+      // Buscar componente no sistema de módulos
+      const modules = moduleSystem.getAllModules()
+      let moduleComponent = null
       
-      // Mapear módulos para componentes
-      if (module === 'esocial-s1000') {
-        componentName = 'ESocialS1000View'
-      } else if (module === 'esocial-s2200') {
-        componentName = 'ESocialS2200View'
-      } else if (module.includes('processing')) {
-        componentName = 'ESocialProcessingView'
+      for (const moduleObj of modules) {
+        if (moduleObj.components && moduleObj.components[module]) {
+          moduleComponent = moduleObj.components[module]
+          break
+        }
       }
       
-      const tabId = await tabCache.addTab({
-        id: module,
-        title: tabTitle,
-        component: componentName,
-        closable: module !== 'dashboard'
-      })
-      
-      activeModule.value = module
+      // Se encontrou o componente do módulo, registrar e criar aba
+      if (moduleComponent) {
+        try {
+          // Resolver componente lazy loading
+          const component = typeof moduleComponent === 'function' 
+            ? await moduleComponent()
+            : moduleComponent
+          
+          // Registrar o componente resolvido
+          tabCache.registerTabComponent(module, component.default || component)
+          
+          // Criar nova aba com o componente do módulo
+          const tabTitle = getModuleTitle(module)
+          await tabCache.addTab({
+            id: module,
+            title: tabTitle,
+            component: module,
+            closable: module !== 'dashboard'
+          })
+          activeModule.value = module
+        } catch (error) {
+          console.error(`Erro ao carregar componente ${module}:`, error)
+          // Fallback para placeholder em caso de erro
+          const tabTitle = getModuleTitle(module)
+          await tabCache.addTab({
+            id: module,
+            title: tabTitle,
+            component: 'dashboard',
+            closable: module !== 'dashboard'
+          })
+          activeModule.value = module
+        }
+      } else {
+        // Para módulos sem componentes específicos, usar placeholder
+        const tabTitle = getModuleTitle(module)
+        await tabCache.addTab({
+          id: module,
+          title: tabTitle,
+          component: 'dashboard',
+          closable: module !== 'dashboard'
+        })
+        activeModule.value = module
+      }
     }
     
     if (window.innerWidth <= 768) {
@@ -597,13 +592,11 @@ const switchTab = (tabId: string) => {
   }
 }
 
-const onDateChange = (newDate: string) => {
-  console.log('Data selecionada:', newDate)
-  // Aqui você pode adicionar lógica para filtrar dados baseado na data
-}
+// Função onDateChange removida - não utilizada
 
 const getModuleTitle = (module: string) => {
-  const titles: Record<string, string> = {
+  // Títulos estáticos para módulos básicos
+  const staticTitles: Record<string, string> = {
     dashboard: 'Dashboard',
     vendas: 'Pedidos de Venda',
     clientes: 'Cadastro de Clientes',
@@ -627,27 +620,38 @@ const getModuleTitle = (module: string) => {
     'folha-pagamento': 'Folha de Pagamento',
     ponto: 'Controle de Ponto',
     ferias: 'Férias e Licenças',
-    esocial: 'eSocial',
-    'esocial-s1000': 'eSocial - S-1000',
-    'esocial-s2200': 'eSocial - S-2200',
-    'esocial-eventos': 'eSocial - Consultar Eventos',
-    'esocial-processing': 'eSocial - Processamento e Envio',
-    'esocial-s2200-processing': 'eSocial - Processamento S-2200',
-    'esocial-s2300-processing': 'eSocial - Processamento S-2300',
     producao: 'Ordens de Produção',
     bom: 'Lista de Materiais (BOM)',
     qualidade: 'Controle de Qualidade',
-    manutencao: 'Manutenção'
+    manutencao: 'Manutenção',
+    // Módulos eSocial
+    'esocial-s1000': 'S-1000 - Empregador',
+    'esocial-processing': 'Processamento da informação',
+    'esocial-s2200': 'S-2200 - Admissão',
+    'esocial-s2300': 'S-2300 - Trabalhador sem vínculo'
   }
-  return titles[module] || 'Módulo'
+  
+  // Verificar títulos estáticos primeiro
+  if (staticTitles[module]) {
+    return staticTitles[module]
+  }
+  
+  // Buscar título no sistema de módulos
+  const modules = moduleSystem.getAllModules()
+  for (const moduleObj of modules) {
+    if (moduleObj.routes) {
+      const routes = moduleObj.routes as RouteRecordRaw[]
+        const route = routes.find((r: RouteRecordRaw) => r.name === module)
+        if (route && route.meta && typeof route.meta === 'object' && route.meta !== null && 'title' in route.meta) {
+          return (route.meta as { title: string }).title
+      }
+    }
+  }
+  
+  return 'Módulo'
 }
 
-const formatCurrency = (value: number) => {
-  return value.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })
-}
+// Função formatCurrency removida - não utilizada
 
 const logout = () => {
   router.push('/login')
@@ -655,6 +659,9 @@ const logout = () => {
 
 // Fechar sidebar ao clicar fora (mobile)
 onMounted(async () => {
+  // Registrar componentes dos módulos primeiro
+  await registerModuleComponents()
+  
   // Inicializar tema
   themeStore.initTheme()
   

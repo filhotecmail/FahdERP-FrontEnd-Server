@@ -78,7 +78,7 @@ export function useSecurityKeys() {
       const ctrlMatch = combo.ctrl ? event.ctrlKey : !event.ctrlKey
       const shiftMatch = combo.shift ? event.shiftKey : !event.shiftKey
       const altMatch = combo.alt ? event.altKey : !event.altKey
-      const keyMatch = event.key.toLowerCase() === combo.key.toLowerCase()
+      const keyMatch = event.key && event.key.toLowerCase() === combo.key.toLowerCase()
 
       if (ctrlMatch && shiftMatch && altMatch && keyMatch) {
         event.preventDefault()

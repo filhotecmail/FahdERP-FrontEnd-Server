@@ -36,7 +36,36 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   // Ações
-  function login(userData: UserData) {
+  /**
+   * Realiza o login do usuário na aplicação.
+   * 
+   * Esta função autentica o usuário, define o estado de autenticação como verdadeiro
+   * e opcionalmente salva os dados no localStorage se a opção "lembrar-me" estiver ativada.
+   * 
+   * @param {UserData} userData - Dados completos do usuário para autenticação
+   * @param {string} userData.username - Nome de usuário
+   * @param {string} userData.cnpj - CNPJ da empresa
+   * @param {string} userData.selectedStore - ID da loja selecionada
+   * @param {string} userData.selectedStoreName - Nome da loja selecionada
+   * @param {string} userData.password - Senha do usuário
+   * @param {boolean} userData.rememberMe - Se deve lembrar os dados do usuário
+   * 
+   * @example
+   * ```typescript
+   * const userData = {
+   *   username: 'admin',
+   *   cnpj: '12.345.678/0001-90',
+   *   selectedStore: '001',
+   *   selectedStoreName: 'Loja Principal',
+   *   password: 'senha123',
+   *   rememberMe: true
+   * }
+   * login(userData)
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function login(userData: UserData): void {
     user.value = userData
     isAuthenticated.value = true
     
@@ -46,7 +75,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
+  /**
+   * Realiza o logout do usuário e limpa todos os dados da aplicação.
+   * 
+   * Esta função remove o usuário autenticado, limpa o estado de autenticação
+   * e remove todos os dados relacionados à aplicação do localStorage e sessionStorage,
+   * incluindo dados de abas, formulários e componentes.
+   * 
+   * @example
+   * ```typescript
+   * logout()
+   * console.log('Usuário deslogado e dados limpos')
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function logout(): void {
     user.value = null
     isAuthenticated.value = false
     
@@ -108,22 +152,85 @@ export const useAuthStore = defineStore('auth', () => {
     return false
   }
 
+  /**
+   * Valida se a senha fornecida corresponde à senha do usuário autenticado.
+   * 
+   * Esta função compara a senha fornecida com a senha do usuário atualmente
+   * autenticado na aplicação.
+   * 
+   * @param {string} password - Senha a ser validada
+   * @returns {boolean} `true` se a senha estiver correta, `false` caso contrário
+   * 
+   * @example
+   * ```typescript
+   * const isValid = validatePassword('minhasenha')
+   * if (isValid) {
+   *   console.log('Senha correta')
+   * } else {
+   *   console.log('Senha incorreta')
+   * }
+   * ```
+   * 
+   * @since 1.0.0
+   */
   function validatePassword(password: string): boolean {
     return user.value?.password === password
   }
 
   // Funções de gerenciamento do estado de bloqueio
-  function lockApp() {
+  /**
+   * Bloqueia a aplicação definindo o estado como LOCKED.
+   * 
+   * Esta função altera o estado da aplicação para bloqueado e salva
+   * automaticamente o estado no localStorage para persistência.
+   * 
+   * @example
+   * ```typescript
+   * lockApp()
+   * console.log('Aplicação bloqueada')
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function lockApp(): void {
     lockState.value = LockState.LOCKED
     saveLockState()
   }
 
-  function unlockApp() {
+  /**
+   * Desbloqueia a aplicação definindo o estado como UNLOCKED.
+   * 
+   * Esta função altera o estado da aplicação para desbloqueado e salva
+   * automaticamente o estado no localStorage para persistência.
+   * 
+   * @example
+   * ```typescript
+   * unlockApp()
+   * console.log('Aplicação desbloqueada')
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function unlockApp(): void {
     lockState.value = LockState.UNLOCKED
     saveLockState()
   }
 
-  function saveLockState() {
+  /**
+   * Salva o estado atual de bloqueio no localStorage.
+   * 
+   * Esta função cria um objeto com o estado de bloqueio atual, timestamp
+   * e ID do usuário, salvando-o no localStorage para persistência entre sessões.
+   * 
+   * @example
+   * ```typescript
+   * saveLockState()
+   * console.log('Estado de bloqueio salvo')
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function saveLockState(): void {
     const lockData: LockStateData = {
       state: lockState.value,
       timestamp: Date.now(),
@@ -132,7 +239,29 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem(LOCK_STATE_STORAGE_KEY, JSON.stringify(lockData))
   }
 
-  function restoreLockState() {
+  /**
+   * Restaura o estado de bloqueio a partir dos dados salvos no localStorage.
+   * 
+   * Esta função tenta recuperar o estado de bloqueio previamente salvo no localStorage
+   * e aplicá-lo à aplicação atual. Se os dados estiverem corrompidos, eles são removidos.
+   * 
+   * @returns {boolean} `true` se o estado foi restaurado com sucesso, `false` caso contrário
+   * 
+   * @example
+   * ```typescript
+   * const restored = restoreLockState()
+   * if (restored) {
+   *   console.log('Estado de bloqueio restaurado')
+   * } else {
+   *   console.log('Nenhum estado de bloqueio encontrado')
+   * }
+   * ```
+   * 
+   * @throws {Error} Remove dados corrompidos do localStorage em caso de erro de parsing
+   * 
+   * @since 1.0.0
+   */
+  function restoreLockState(): boolean {
     try {
       const savedLockData = localStorage.getItem(LOCK_STATE_STORAGE_KEY)
       if (savedLockData) {
@@ -148,7 +277,25 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Monitoramento assíncrono do estado de bloqueio
-  function startLockStateMonitoring() {
+  /**
+   * Inicia o monitoramento assíncrono do estado de bloqueio da aplicação.
+   * 
+   * Esta função configura dois mecanismos de sincronização:
+   * 1. Event listener para mudanças no localStorage de outras abas/janelas
+   * 2. Verificação periódica (a cada segundo) do estado no localStorage
+   * 
+   * Isso garante que o estado de bloqueio seja sincronizado entre múltiplas
+   * abas/janelas da mesma aplicação.
+   * 
+   * @example
+   * ```typescript
+   * startLockStateMonitoring()
+   * console.log('Monitoramento de estado de bloqueio iniciado')
+   * ```
+   * 
+   * @since 1.0.0
+   */
+  function startLockStateMonitoring(): void {
     // Monitora mudanças no localStorage de outras abas/janelas
     window.addEventListener('storage', (event) => {
       if (event.key === LOCK_STATE_STORAGE_KEY && event.newValue) {

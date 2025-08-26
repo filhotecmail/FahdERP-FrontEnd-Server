@@ -5,6 +5,7 @@ Este projeto utiliza GitHub Actions para implementar um pipeline completo de Int
 ## 🚀 Workflows Configurados
 
 ### 1. Continuous Integration (`ci.yml`)
+
 Executado em:
 - Push para branches: `master`, `main`, `develop`
 - Pull Requests para: `master`, `main`, `develop`

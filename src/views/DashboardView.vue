@@ -496,7 +496,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, provide, nextTick } from 'vue'
+import { ref, reactive, onMounted, provide } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
 import WeatherWidget from '@/components/WeatherWidget.vue'

@@ -90,13 +90,9 @@ export function useSecurityKeys() {
     return true
   }
 
-
-
   function handleBeforeUnload(event: BeforeUnloadEvent) {
     // Prevenir fechamento/refresh da página
     event.preventDefault()
-    event.returnValue = 'Tem certeza que deseja sair? Suas alterações podem ser perdidas.'
-    return event.returnValue
   }
 
   function handleVisibilityChange() {
@@ -114,14 +110,14 @@ export function useSecurityKeys() {
 
     // Desabilitar seleção de texto
     document.body.style.userSelect = 'none'
-    ;(document.body.style as any).webkitUserSelect = 'none'
+    ;(document.body.style as CSSStyleDeclaration & { webkitUserSelect: string }).webkitUserSelect = 'none'
     
     // Desabilitar arrastar e soltar
-    ;(document.body.style as any).webkitUserDrag = 'none'
+    ;(document.body.style as CSSStyleDeclaration & { webkitUserDrag: string }).webkitUserDrag = 'none'
     
     // Desabilitar highlight
-    ;(document.body.style as any).webkitTouchCallout = 'none'
-    ;(document.body.style as any).webkitTapHighlightColor = 'transparent'
+    ;(document.body.style as CSSStyleDeclaration & { webkitTouchCallout: string }).webkitTouchCallout = 'none'
+    ;(document.body.style as CSSStyleDeclaration & { webkitTapHighlightColor: string }).webkitTapHighlightColor = 'transparent'
   }
 
   function disableSecurityKeys() {
@@ -132,14 +128,14 @@ export function useSecurityKeys() {
 
     // Restaurar seleção de texto
     document.body.style.userSelect = ''
-    ;(document.body.style as any).webkitUserSelect = ''
+    ;(document.body.style as CSSStyleDeclaration & { webkitUserSelect: string }).webkitUserSelect = ''
     
     // Restaurar arrastar e soltar
-    ;(document.body.style as any).webkitUserDrag = ''
+    ;(document.body.style as CSSStyleDeclaration & { webkitUserDrag: string }).webkitUserDrag = ''
     
     // Restaurar highlight
-    ;(document.body.style as any).webkitTouchCallout = ''
-    ;(document.body.style as any).webkitTapHighlightColor = ''
+    ;(document.body.style as CSSStyleDeclaration & { webkitTouchCallout: string }).webkitTouchCallout = ''
+    ;(document.body.style as CSSStyleDeclaration & { webkitTapHighlightColor: string }).webkitTapHighlightColor = ''
   }
 
   // Auto-ativar quando o composable é usado

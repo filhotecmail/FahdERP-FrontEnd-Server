@@ -121,20 +121,19 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import TimeBreadcrumb from './TimeBreadcrumb.vue'
 // import { useToast } from 'vue-toastification' // Removido pois não está sendo usado
 import { 
-  weatherConfig, 
+  weatherConfig,
   formatTemperature,
   getUserLocation,
   getWeatherFromGemini,
-  getWeatherIcon,
   getTimePeriodIcon,
-  getTimePeriodDescription
+  type WeatherResponse
 } from '../config/weather'
 
 // const toast = useToast() // Removido pois não está sendo usado
 
 const weatherWidget = ref<HTMLElement | null>(null)
 const showDropdown = ref(false)
-const weatherData = ref<any>(null)
+const weatherData = ref<WeatherResponse | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const updateInterval = ref<NodeJS.Timeout | null>(null)
@@ -201,7 +200,7 @@ const fetchWeatherData = async () => {
     
     // Buscar dados meteorológicos via Gemini AI
     const data = await getWeatherFromGemini(coords.lat, coords.lon)
-    weatherData.value = data as any
+    weatherData.value = data
     
     console.log('Dados meteorológicos obtidos via Gemini AI:', data)
     

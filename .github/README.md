@@ -1,63 +1,106 @@
-# GitHub Actions - Deploy Automático para Fly.io
+# Pipeline CI/CD - FAHD ERP
 
-Este repositório está configurado com um pipeline de CI/CD que faz deploy automático para o Fly.io sempre que há push na branch `master` ou `main`.
+Este projeto utiliza GitHub Actions para implementar um pipeline completo de Integração Contínua (CI) e Deploy Contínuo (CD).
 
-## Configuração Necessária
+## 🚀 Workflows Configurados
 
-### 1. Configurar o Token do Fly.io
+### 1. Continuous Integration (`ci.yml`)
 
-Para que o pipeline funcione, você precisa adicionar o token de API do Fly.io nos secrets do repositório GitHub:
+Executado em:
+- Push para branches: `master`, `main`, `develop`
+- Pull Requests para: `master`, `main`, `develop`
 
-1. **Obter o token do Fly.io:**
-   ```bash
-   flyctl auth token
-   ```
+#### Jobs Incluídos:
 
-2. **Adicionar o token nos GitHub Secrets:**
-   - Vá para o seu repositório no GitHub
-   - Clique em `Settings` > `Secrets and variables` > `Actions`
-   - Clique em `New repository secret`
-   - Nome: `FLY_API_TOKEN`
-   - Valor: Cole o token obtido no passo 1
-   - Clique em `Add secret`
+**Code Quality Checks**
+- ✅ ESLint (verificação de qualidade de código)
+- ✅ TypeScript type checking
+- ✅ Build da aplicação
+- ✅ Execução de testes unitários
+- ✅ Geração de relatórios de cobertura
+- ✅ Testa em Node.js 18.x e 20.x
 
-### 2. Estrutura do Pipeline
+**Security Audit**
+- 🔒 npm audit (vulnerabilidades de segurança)
+- 🔒 audit-ci (verificação adicional de vulnerabilidades)
 
-O pipeline (`deploy.yml`) executa os seguintes passos:
+**Dependency Check**
+- 📦 Verificação de dependências desatualizadas
+- ⚠️ Detecção de pacotes depreciados
 
-1. **Checkout do código** - Baixa o código do repositório teste
-2. **Setup Node.js** - Configura o ambiente Node.js 18 com cache npm
-3. **Install dependencies** - Instala as dependências com `npm ci`
-4. **Build application** - Compila a aplicação com `npm run build`
-5. **Setup Fly.io CLI** - Instala a CLI do Fly.io
-6. **Deploy to Fly.io** - Faz o deploy usando `flyctl deploy --remote-only`
+### 2. Deploy to Fly.io (`deploy.yml`)
 
-### 3. Branches Monitoradas
+Executado em:
+- Push para branches: `master`, `main`
+- Após conclusão bem-sucedida do workflow de CI
 
-O pipeline é acionado automaticamente quando há push nas seguintes branches:
-- `master`
-- `main`
+#### Verificações Pré-Deploy:
+- 🔒 Auditoria de segurança (nível alto)
+- ✅ Linting
+- ✅ Type checking
+- 🏗️ Build da aplicação
+- ✅ Verificação de artefatos de build
 
-### 4. Verificação do Deploy
+## 📊 Cobertura de Código
 
-Após o push, você pode:
-- Acompanhar o progresso na aba `Actions` do GitHub
-- Verificar o status do deploy no dashboard do Fly.io
-- Acessar a aplicação em: https://fahd-erp.fly.dev/
+O projeto está configurado para gerar relatórios de cobertura com:
+- **Provider**: V8
+- **Formatos**: Text, JSON, HTML, LCOV
+- **Thresholds mínimos**: 80% (branches, functions, lines, statements)
+- **Upload**: Codecov (opcional)
 
-## Troubleshooting
+## 🛡️ Verificações de Segurança
 
-### Erro de Token
-Se o deploy falhar com erro de autenticação:
-- Verifique se o secret `FLY_API_TOKEN` está configurado corretamente
-- Gere um novo token com `flyctl auth token` se necessário
+- **npm audit**: Verifica vulnerabilidades conhecidas
+- **audit-ci**: Verificação adicional com nível moderado
+- **Pré-deploy**: Auditoria de alto nível antes do deploy
 
-### Erro de Build
-Se o build falhar:
-- Verifique se todas as dependências estão no `package.json`
-- Teste o build localmente com `npm run build`
+## 📋 Requisitos de Qualidade
 
-### Erro de Deploy
-Se o deploy falhar:
-- Verifique se o arquivo `fly.toml` está presente e configurado corretamente
-- Verifique se a aplicação está configurada no Fly.io
+Para que o código seja aceito, deve passar em:
+1. ✅ Todos os testes unitários
+2. ✅ Verificação de tipos TypeScript
+3. ✅ Linting sem erros
+4. ✅ Build bem-sucedido
+5. 🔒 Auditoria de segurança
+6. 📦 Verificação de dependências
+7. 📊 Cobertura mínima de 80%
+
+## 🚫 Bloqueios Automáticos
+
+O pipeline irá **falhar** se:
+- Houver erros de linting
+- Houver erros de TypeScript
+- Testes falharem
+- Build falhar
+- Vulnerabilidades de segurança (nível moderado+)
+- Dependências muito desatualizadas
+- Cobertura abaixo de 80%
+
+## 🔧 Scripts Disponíveis
+
+```bash
+# Desenvolvimento
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build de produção
+npm run preview      # Preview do build
+
+# Qualidade de Código
+npm run lint         # ESLint
+npm run type-check   # Verificação TypeScript
+
+# Testes
+npm run test         # Testes em modo watch
+npm run test:run     # Execução única dos testes
+npm run test:ui      # Interface gráfica dos testes
+```
+
+## 📈 Monitoramento
+
+- **Status dos workflows**: Visível na aba Actions do GitHub
+- **Cobertura**: Relatórios gerados em `./coverage/`
+- **Logs**: Disponíveis em cada job do workflow
+
+---
+
+**Nota**: Este pipeline segue as melhores práticas para projetos Vue.js + TypeScript + Vite, garantindo código limpo, seguro e de alta qualidade.

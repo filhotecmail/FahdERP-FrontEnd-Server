@@ -197,6 +197,17 @@ export function useTabCache(config?: TabCacheConfig) {
       removeComponent(tab.component, tab.props)
     }
     
+    // Limpar dados dos formulários da aba que está sendo fechada
+    const { removeTabState } = useTabState(tabId)
+    removeTabState()
+    
+    // Limpar também dados específicos do localStorage para esta aba
+    Object.keys(localStorage).forEach(key => {
+      if (key.includes(tabId) || key.startsWith(`tab-${tabId}-`) || key.startsWith(`form-${tabId}-`)) {
+        localStorage.removeItem(key)
+      }
+    })
+    
     // Remove a aba
     tabs.value.splice(tabIndex, 1)
     
@@ -337,6 +348,24 @@ export function useTabCache(config?: TabCacheConfig) {
   }
   
   /**
+   * Reordena as abas movendo uma aba de uma posição para outra
+   */
+  const reorderTabs = (fromIndex: number, toIndex: number) => {
+    if (fromIndex < 0 || fromIndex >= tabs.value.length || 
+        toIndex < 0 || toIndex >= tabs.value.length || 
+        fromIndex === toIndex) {
+      return
+    }
+    
+    const tabsCopy = [...tabs.value]
+    const [movedTab] = tabsCopy.splice(fromIndex, 1)
+    tabsCopy.splice(toIndex, 0, movedTab)
+    
+    tabs.value = tabsCopy
+    persistTabs()
+  }
+
+  /**
    * Obtém estatísticas das abas e cache
    */
   const getTabStats = () => {
@@ -384,6 +413,7 @@ export function useTabCache(config?: TabCacheConfig) {
     closeAllTabs,
     closeOtherTabs,
     cleanupInactiveTabs,
+    reorderTabs,
     getTabStats,
     
     // Cache

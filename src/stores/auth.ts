@@ -49,7 +49,24 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     user.value = null
     isAuthenticated.value = false
+    
+    // Limpar todos os dados do localStorage relacionados à aplicação
     localStorage.removeItem('fahd_user_data')
+    localStorage.removeItem(LOCK_STATE_STORAGE_KEY)
+    
+    // Limpar cache de abas e componentes
+    localStorage.removeItem('tab-manager-tabs')
+    localStorage.removeItem('tab-manager-activeTab')
+    
+    // Limpar todos os estados de formulários salvos
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('tab-') || key.startsWith('form-') || key.startsWith('component-')) {
+        localStorage.removeItem(key)
+      }
+    })
+    
+    // Limpar sessionStorage também
+    sessionStorage.clear()
   }
 
   function restoreSession() {

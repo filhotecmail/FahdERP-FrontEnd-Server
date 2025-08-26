@@ -54,23 +54,70 @@
     <div class="tabs-bar" v-if="tabCache.tabs.value.length > 0">
       <div class="tabs-container">
         <div 
-          v-for="tab in tabCache.tabs.value" 
+          v-for="(tab, index) in tabCache.tabs.value" 
           :key="tab.id"
           class="tab-item"
-          :class="{ active: tabCache.activeTabId.value === tab.id }"
+          :class="{ 
+            active: tabCache.activeTabId.value === tab.id, 
+            dragging: draggedTab === tab.id,
+            'drag-over': dragOverIndex === index
+          }"
+          :draggable="activeTabMenu !== tab.id"
           @click="switchTab(tab.id)"
+          @dragstart="activeTabMenu === tab.id ? $event.preventDefault() : handleDragStart(tab.id, $event)"
+          @dragover="handleDragOver($event)"
+          @drop="handleDrop(index, $event)"
+          @dragend="handleDragEnd"
+          @dragenter="handleDragEnter(index)"
+          @dragleave="handleDragLeave"
         >
           <span class="tab-title">{{ tab.title }}</span>
-          <button 
-            v-if="tab.closable"
-            @click.stop="closeTab(tab.id)"
-            class="tab-close-btn"
-            title="Fechar aba"
-          >
-            <svg viewBox="0 0 24 24">
-              <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-            </svg>
-          </button>
+          <div class="tab-actions">
+            <!-- Menu Dropdown -->
+            <div class="tab-menu-container" v-if="tab.closable" @dragstart.stop.prevent @mousedown.stop>
+              <button 
+                @click.stop="toggleTabMenu(tab.id, $event)"
+                @mousedown.stop
+                @dragstart.stop.prevent
+                class="tab-menu-btn"
+                title="Opções da aba"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z"/>
+                </svg>
+              </button>
+              
+              <!-- Dropdown Menu -->
+              <div 
+                v-if="activeTabMenu === tab.id"
+                class="tab-dropdown-menu"
+                @click.stop
+              >
+                <button 
+                  @click="closeTabFromMenu(tab.id)"
+                  class="tab-dropdown-item"
+                >
+                  <svg viewBox="0 0 24 24" class="dropdown-icon">
+                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                  </svg>
+                  Fechar aba
+                </button>
+              </div>
+            </div>
+            
+            <!-- Botão de fechar tradicional (mantido como fallback) -->
+            <button 
+              v-if="tab.closable"
+              @click.stop="closeTab(tab.id)"
+              class="tab-close-btn"
+              title="Fechar aba"
+              style="display: none;"
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -449,7 +496,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, provide } from 'vue'
+import { ref, reactive, onMounted, provide, nextTick } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
 import WeatherWidget from '@/components/WeatherWidget.vue'
@@ -467,6 +514,11 @@ const themeStore = useThemeStore()
 const sidebarOpen = ref(false)
 const activeModule = ref<string | null>(null)
 const searchQuery = ref('')
+const activeTabMenu = ref<string | null>(null)
+
+// Estados do drag and drop
+const draggedTab = ref<string | null>(null)
+const dragOverIndex = ref<number | null>(null)
 
 // Sistema de abas com cache
 const tabCache = useTabCache({
@@ -475,6 +527,8 @@ const tabCache = useTabCache({
   persistTabs: true,
   autoCloseInactive: false
 })
+
+// Remover listener duplicado - será tratado no onMounted principal
 
 // Prover o tabCache para componentes filhos
 provide('tabCache', tabCache)
@@ -671,6 +725,66 @@ const switchTab = (tabId: string) => {
   }
 }
 
+const toggleTabMenu = (tabId: string, event: Event) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  // Alternar o estado do menu imediatamente
+  if (activeTabMenu.value === tabId) {
+    activeTabMenu.value = null
+  } else {
+    activeTabMenu.value = tabId
+  }
+}
+
+const closeTabFromMenu = (tabId: string) => {
+  activeTabMenu.value = null
+  closeTab(tabId)
+}
+
+// Funções de drag and drop
+const handleDragStart = (tabId: string, event: DragEvent) => {
+  draggedTab.value = tabId
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', tabId)
+  }
+}
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move'
+  }
+}
+
+const handleDragEnter = (index: number) => {
+  dragOverIndex.value = index
+}
+
+const handleDragLeave = () => {
+  // Não limpar imediatamente para evitar flickering
+}
+
+const handleDrop = (targetIndex: number, event: DragEvent) => {
+  event.preventDefault()
+  
+  if (!draggedTab.value) return
+  
+  const tabs = tabCache.tabs.value
+  const draggedIndex = tabs.findIndex(tab => tab.id === draggedTab.value)
+  
+  if (draggedIndex === -1 || draggedIndex === targetIndex) return
+  
+  // Reordenar as abas usando a função do composable
+  tabCache.reorderTabs(draggedIndex, targetIndex)
+}
+
+const handleDragEnd = () => {
+  draggedTab.value = null
+  dragOverIndex.value = null
+}
+
 // Função onDateChange removida - não utilizada
 
 const getModuleTitle = (module: string) => {
@@ -760,11 +874,28 @@ onMounted(async () => {
   // O usuário deve clicar em "Dashboard Vendas" no menu CRM/Vendas para visualizar
   
   document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement
     const sidebar = document.querySelector('.sidebar')
     const hamburger = document.querySelector('.hamburger-btn')
     
-    if (sidebarOpen.value && sidebar && !sidebar.contains(e.target as Node) && !hamburger?.contains(e.target as Node)) {
+    // Fechar sidebar ao clicar fora
+    if (sidebarOpen.value && sidebar && !sidebar.contains(target) && !hamburger?.contains(target)) {
       sidebarOpen.value = false
+    }
+    
+    // Fechar menu dropdown das abas ao clicar fora
+    // Verificar se o clique foi em um botão de menu ou dentro do container
+    const clickedMenuButton = target.closest('.tab-menu-btn')
+    const clickedMenuContainer = target.closest('.tab-menu-container')
+    
+    // Se clicou no botão do menu, não fechar (deixar o toggleTabMenu lidar com isso)
+    if (clickedMenuButton) {
+      return
+    }
+    
+    // Se clicou fora de qualquer container de menu, fechar o dropdown
+    if (!clickedMenuContainer && activeTabMenu.value) {
+      activeTabMenu.value = null
     }
   })
 })
@@ -1196,7 +1327,7 @@ onMounted(async () => {
 /* Conteúdo Principal */
 .main-content {
   flex: 1;
-  padding: 0.25rem 0;
+  padding: 1.5rem;
   overflow-y: auto;
   margin-left: 70px;
   transition: margin-left 0.3s ease;
@@ -1841,5 +1972,158 @@ onMounted(async () => {
     flex-direction: column;
     text-align: center;
   }
+}
+
+/* Estilos para o Menu Dropdown das Abas */
+.tab-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+}
+
+.tab-menu-container {
+  position: relative;
+  z-index: 100000;
+  pointer-events: auto;
+}
+
+.tab-menu-container * {
+  pointer-events: auto;
+}
+
+.tab-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+  padding: 4px;
+}
+
+.tab-menu-btn:hover {
+  background: var(--bg-hover);
+  opacity: 1;
+}
+
+.tab-menu-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-secondary);
+}
+
+.tab-menu-btn:hover svg {
+  fill: var(--text-primary);
+}
+
+.tab-item:not(.active) .tab-menu-btn {
+  opacity: 0;
+}
+
+.tab-item:hover .tab-menu-btn {
+  opacity: 0.7;
+}
+
+.tab-item:hover .tab-menu-btn:hover {
+  opacity: 1;
+  background: var(--bg-hover);
+  transform: scale(1.05);
+}
+
+
+
+.tab-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.tab-dropdown-item:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Dropdown menu posicionado corretamente */
+.tab-dropdown-menu {
+  position: fixed;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999999;
+  min-width: 140px;
+  padding: 0.5rem 0;
+  margin-top: 4px;
+}
+
+/* Estilos para Drag and Drop das Abas */
+.tab-item {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.tab-item:active {
+  cursor: grabbing;
+}
+
+.tab-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  cursor: grabbing;
+}
+
+.tab-item.drag-over {
+  background: var(--accent-primary-alpha);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-item[draggable="true"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Indicador visual de posição de drop */
+.tab-item.drag-over::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent-primary);
+  border-radius: 0 2px 2px 0;
+}
+
+.tab-item.drag-over::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent-primary);
+  border-radius: 2px 0 0 2px;
 }
 </style>

@@ -351,7 +351,7 @@ export function configureSweetAlert() {
 
 // Funções de conveniência com tema aplicado
 export const SwalCustom = {
-  fire: (options: any) => {
+  fire: (options: { [key: string]: unknown }) => {
     return Swal.fire({
       ...swalConfig,
       ...options
@@ -415,7 +415,7 @@ export const SwalCustom = {
     })
   },
   
-  confirm: (title: string, text?: string, confirmText = 'Confirmar', cancelText = 'Cancelar', breadcrumb?: string[]) => {
+  confirm: (title: string, text?: string, breadcrumb?: string[]) => {
     const cardHtml = createCardWithHeader(title, text || '', breadcrumb)
     
     return Swal.fire({

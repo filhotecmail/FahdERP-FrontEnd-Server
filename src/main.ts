@@ -12,8 +12,8 @@ import router, { registerModuleRoutes } from './router'
 import { useThemeStore } from './stores/theme'
 import { FormStatePlugin } from './plugins/formStatePlugin'
 import { addToGlobalConsole } from './utils/debugFormState'
-import { ModuleSystemPlugin, moduleSystem } from './modules/core/moduleSystem'
-import esocialModule from './modules/esocial'
+import { ModuleSystemPlugin, moduleSystem } from './modules/core/moduleSystem.js'
+import esocialModule from './modules/esocial/index.js'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -61,6 +61,22 @@ configureSweetAlert()
 // Adicionar ferramentas de debug em desenvolvimento
 if (import.meta.env.DEV) {
   addToGlobalConsole()
+}
+
+// Tratamento global de erros não capturados
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Erro global capturado:', err, info)
+  
+  // Usar toast para exibir erro
+  import('vue-toastification').then(({ useToast }) => {
+    const toast = useToast()
+    const error = err as Error
+    toast.error(`Erro da aplicação: ${error.message || 'Erro desconhecido'}`, {
+      timeout: 8000,
+      closeOnClick: true,
+      pauseOnHover: true
+    })
+  })
 }
 
 app.mount('#app')

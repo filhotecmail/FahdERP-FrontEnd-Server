@@ -113,10 +113,12 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast, POSITION } from 'vue-toastification'
 import { useThemeStore } from '../stores/theme'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const toast = useToast()
 const themeStore = useThemeStore()
+const authStore = useAuthStore()
 const isDark = computed(() => themeStore.isDark)
 const isLoading = ref(false)
 
@@ -177,12 +179,24 @@ const handleLogin = async () => {
         formData.username.value === validUsername && 
         formData.password.value === validPassword) {
       
+      const selectedStoreName = availableStores.value.find(s => s.id === formData.selectedStore.value)?.name || ''
+      
+      // Salvar dados do usuário no store de autenticação
+      authStore.login({
+        username: formData.username.value,
+        cnpj: formData.cnpj.value,
+        selectedStore: formData.selectedStore.value,
+        selectedStoreName,
+        password: formData.password.value,
+        rememberMe: formData.rememberMe.value
+      })
+      
       console.log('Login bem-sucedido:', {
         username: formData.username.value,
         cnpj: formData.cnpj.value,
         selectedStore: formData.selectedStore.value,
         rememberMe: formData.rememberMe.value,
-        selectedStoreName: availableStores.value.find(s => s.id === formData.selectedStore.value)?.name
+        selectedStoreName
       })
       
       // Mostrar notificação de sucesso

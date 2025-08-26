@@ -25,7 +25,7 @@ Para que o pipeline funcione, você precisa adicionar o token de API do Fly.io n
 
 O pipeline (`deploy.yml`) executa os seguintes passos:
 
-1. **Checkout do código** - Baixa o código do repositório
+1. **Checkout do código** - Baixa o código do repositório teste
 2. **Setup Node.js** - Configura o ambiente Node.js 18 com cache npm
 3. **Install dependencies** - Instala as dependências com `npm ci`
 4. **Build application** - Compila a aplicação com `npm run build`

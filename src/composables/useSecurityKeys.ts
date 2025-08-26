@@ -90,12 +90,7 @@ export function useSecurityKeys() {
     return true
   }
 
-  function handleContextMenu(event: MouseEvent) {
-    // Bloquear menu de contexto (botão direito)
-    event.preventDefault()
-    event.stopPropagation()
-    return false
-  }
+
 
   function handleBeforeUnload(event: BeforeUnloadEvent) {
     // Prevenir fechamento/refresh da página
@@ -114,7 +109,6 @@ export function useSecurityKeys() {
   function enableSecurityKeys() {
     // Adicionar event listeners
     document.addEventListener('keydown', handleKeyDown, { capture: true })
-    document.addEventListener('contextmenu', handleContextMenu, { capture: true })
     window.addEventListener('beforeunload', handleBeforeUnload)
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
@@ -133,7 +127,6 @@ export function useSecurityKeys() {
   function disableSecurityKeys() {
     // Remover event listeners
     document.removeEventListener('keydown', handleKeyDown, { capture: true })
-    document.removeEventListener('contextmenu', handleContextMenu, { capture: true })
     window.removeEventListener('beforeunload', handleBeforeUnload)
     document.removeEventListener('visibilitychange', handleVisibilityChange)
 

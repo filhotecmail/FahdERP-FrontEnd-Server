@@ -69,7 +69,30 @@ export const useAuthStore = defineStore('auth', () => {
     sessionStorage.clear()
   }
 
-  function restoreSession() {
+  /**
+   * Restaura a sessão do usuário a partir dos dados salvos no localStorage.
+   * 
+   * Esta função tenta recuperar os dados do usuário previamente salvos no localStorage
+   * e restaurar o estado de autenticação da aplicação. Se os dados forem encontrados
+   * e válidos, o usuário será automaticamente autenticado.
+   * 
+   * @returns {boolean} `true` se a sessão foi restaurada com sucesso, `false` caso contrário
+   * 
+   * @example
+   * ```typescript
+   * const sessionRestored = restoreSession()
+   * if (sessionRestored) {
+   *   console.log('Usuário logado automaticamente')
+   * } else {
+   *   console.log('Nenhuma sessão válida encontrada')
+   * }
+   * ```
+   * 
+   * @throws {Error} Remove dados corrompidos do localStorage em caso de erro de parsing
+   * 
+   * @since 1.0.0
+   */
+  function restoreSession(): boolean {
     try {
       const savedData = localStorage.getItem('fahd_user_data')
       if (savedData) {

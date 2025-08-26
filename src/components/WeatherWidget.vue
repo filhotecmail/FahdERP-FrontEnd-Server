@@ -16,7 +16,7 @@
       </div>
       
       <div v-else-if="weatherData" class="weather-display">
-        <span class="weather-emoji">{{ getWeatherIcon(weatherData.current.condition.text) }}</span>
+        <img :src="getTimePeriodIcon(weatherData.location.localtime)" alt="Período do dia" class="weather-emoji" />
         <span class="temperature">{{ formatTemperature(weatherData.current.temp_c) }}</span>
       </div>
     </div>
@@ -38,6 +38,12 @@
         </div>
 
         <div v-else-if="weatherData" class="weather-content">
+          <!-- Time Breadcrumb -->
+          <TimeBreadcrumb 
+            :localtime="weatherData.location.localtime" 
+            @period-selected="onPeriodSelected"
+          />
+          
           <!-- Header com localização -->
           <div class="weather-header">
             <h3>{{ weatherData.location.name }}</h3>
@@ -110,25 +116,28 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useToast } from 'vue-toastification'
+import TimeBreadcrumb from './TimeBreadcrumb.vue'
+// import { useToast } from 'vue-toastification' // Removido pois não está sendo usado
 import { 
   weatherConfig, 
   formatTemperature,
   getUserLocation,
   getWeatherFromGemini,
-  getWeatherIcon
+  getWeatherIcon,
+  getTimePeriodIcon,
+  getTimePeriodDescription
 } from '../config/weather'
 
-const toast = useToast()
+// const toast = useToast() // Removido pois não está sendo usado
 
-const weatherWidget = ref(null)
+const weatherWidget = ref<HTMLElement | null>(null)
 const showDropdown = ref(false)
-const weatherData = ref(null)
+const weatherData = ref<any>(null)
 const loading = ref(false)
-const error = ref(null)
-const updateInterval = ref(null)
+const error = ref<string | null>(null)
+const updateInterval = ref<NodeJS.Timeout | null>(null)
 const hasGeolocationPermission = ref(false)
 
 // A função getUserLocation já está importada do weather.ts
@@ -166,7 +175,7 @@ const checkGeolocationPermission = async () => {
         { timeout: 5000 }
       )
     })
-  } catch (err) {
+  } catch {
     hasGeolocationPermission.value = false
     return false
   }
@@ -192,7 +201,7 @@ const fetchWeatherData = async () => {
     
     // Buscar dados meteorológicos via Gemini AI
     const data = await getWeatherFromGemini(coords.lat, coords.lon)
-    weatherData.value = data
+    weatherData.value = data as any
     
     console.log('Dados meteorológicos obtidos via Gemini AI:', data)
     
@@ -208,20 +217,27 @@ const fetchWeatherData = async () => {
 
 // Funções removidas - usando apenas getWeatherFromGemini
 
+// Função para lidar com seleção de período
+const onPeriodSelected = (period: string) => {
+  console.log('Período selecionado:', period)
+  // Aqui você pode implementar lógica adicional se necessário
+}
+
 // Função para alternar dropdown
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
 }
 
 // Função para fechar dropdown ao clicar fora
-const handleClickOutside = (event) => {
-  if (weatherWidget.value && !weatherWidget.value.contains(event.target)) {
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (weatherWidget.value && !weatherWidget.value.contains(target)) {
     showDropdown.value = false
   }
 }
 
 // Função para formatar horário
-const formatTime = (dateString) => {
+const formatTime = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
@@ -299,7 +315,8 @@ onUnmounted(() => {
 }
 
 .weather-emoji {
-  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
   line-height: 1;
 }
 
@@ -396,6 +413,29 @@ onUnmounted(() => {
   margin: 0 0 8px 0;
   font-size: 14px;
   color: #666;
+}
+
+.time-period {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.period-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.period-text {
+  font-size: 13px;
 }
 
 .last-updated {

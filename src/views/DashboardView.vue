@@ -450,7 +450,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, provide } from 'vue'
-import { useRouter, type RouteRecordRaw } from 'vue-router'
+import { type RouteRecordRaw } from 'vue-router'
 import ThemeSelector from '@/components/ThemeSelector.vue'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import UserDropdown from '@/components/UserDropdown.vue'
@@ -460,7 +460,7 @@ import { useThemeStore } from '@/stores/theme'
 import { useTabCache } from '@/composables/useTabCache'
 import { moduleSystem } from '@/modules/core/moduleSystem'
 
-const router = useRouter()
+// const router = useRouter() // Removido pois não está sendo usado
 const themeStore = useThemeStore()
 
 // Estados da interface
@@ -733,20 +733,20 @@ const getModuleTitle = (module: string) => {
 
 // Função formatCurrency removida - não utilizada
 
-const logout = async () => {
-  const { SwalCustom } = await import('../plugins/sweetalert')
-  
-  const result = await SwalCustom.confirm(
-    'Sair da Aplicação',
-    'Tem certeza que deseja sair do sistema?',
-    'Sim, sair',
-    'Cancelar'
-  )
-  
-  if (result.isConfirmed) {
-    router.push('/login')
-  }
-}
+// const logout = async () => {
+//   const { SwalCustom } = await import('../plugins/sweetalert')
+//   
+//   const result = await SwalCustom.confirm(
+//     'Sair da Aplicação',
+//     'Tem certeza que deseja sair do sistema?',
+//     'Sim, sair',
+//     'Cancelar'
+//   )
+//   
+//   if (result.isConfirmed) {
+//     router.push('/login')
+//   }
+// }
 
 // Fechar sidebar ao clicar fora (mobile)
 onMounted(async () => {

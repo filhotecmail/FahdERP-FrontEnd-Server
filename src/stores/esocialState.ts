@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 
-// Tipos para os estados das diferentes abas
+/**
+ * Filtros para a aba de processamento do eSocial
+ */
 interface ProcessingFilters {
   cpf: string
   matricula: string
@@ -11,6 +13,9 @@ interface ProcessingFilters {
   dataFim: string
 }
 
+/**
+ * Estado completo da aba de processamento do eSocial
+ */
 interface ProcessingState {
   filters: ProcessingFilters
   recordsPerPage: string
@@ -21,6 +26,9 @@ interface ProcessingState {
   activeTab: string
 }
 
+/**
+ * Estado da aba XML de Envio do eSocial
+ */
 interface XmlEnvioState {
   filters: {
     protocolo: string
@@ -34,6 +42,9 @@ interface XmlEnvioState {
   filtersExpanded: boolean
 }
 
+/**
+ * Estado da aba Visão Sumarizada do eSocial
+ */
 interface VisaoSumarizadaState {
   chartType: string
   dateRange: string
@@ -46,6 +57,9 @@ interface VisaoSumarizadaState {
   }
 }
 
+/**
+ * Estado da aba S3000 do eSocial
+ */
 interface S3000State {
   filters: {
     competencia: string
@@ -59,6 +73,24 @@ interface S3000State {
   filtersExpanded: boolean
 }
 
+/**
+ * Store para gerenciamento de estados do módulo eSocial
+ * 
+ * Gerencia os estados de todas as abas do módulo eSocial incluindo:
+ * - Processamento: filtros, paginação e seleção de registros
+ * - XML de Envio: controle de protocolos e status de envio
+ * - Visão Sumarizada: configurações de gráficos e relatórios
+ * - S3000: gerenciamento de competências e filtros específicos
+ * 
+ * @example
+ * ```typescript
+ * const esocialStore = useESocialStateStore()
+ * esocialStore.setActiveTab('processamento')
+ * esocialStore.updateProcessingFilters({ cpf: '12345678901' })
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export const useESocialStateStore = defineStore('esocialState', () => {
   // Estado da aba Processamento
   const processingState = reactive<ProcessingState>({
@@ -122,11 +154,29 @@ export const useESocialStateStore = defineStore('esocialState', () => {
   // Aba ativa atual
   const activeTab = ref('processamento')
 
-  // Ações para gerenciar o estado do Processamento
+  /**
+   * Atualiza os filtros da aba de processamento
+   * 
+   * @param filters - Filtros parciais para atualizar
+   * @example
+   * ```typescript
+   * updateProcessingFilters({ cpf: '12345678901', status: 'processado' })
+   * ```
+   * 
+   * @since 1.0.0
+   */
   const updateProcessingFilters = (filters: Partial<ProcessingFilters>) => {
     Object.assign(processingState.filters, filters)
   }
 
+  /**
+   * Atualiza a paginação da aba de processamento
+   * 
+   * @param page - Número da página atual
+   * @param recordsPerPage - Quantidade de registros por página
+   * 
+   * @since 1.0.0
+   */
   const updateProcessingPagination = (page: number, recordsPerPage: string) => {
     processingState.currentPage = page
     processingState.recordsPerPage = recordsPerPage
@@ -210,6 +260,19 @@ export const useESocialStateStore = defineStore('esocialState', () => {
   }
 
   // Função para resetar todos os estados (se necessário)
+  /**
+   * Reseta todos os estados do eSocial para valores padrão
+   * 
+   * Limpa filtros, paginação e seleções de todas as abas,
+   * retornando ao estado inicial da aplicação.
+   * 
+   * @example
+   * ```typescript
+   * resetAllStates() // Limpa todos os estados
+   * ```
+   * 
+   * @since 1.0.0
+   */
   const resetAllStates = () => {
     // Reset Processamento
     Object.assign(processingState, {

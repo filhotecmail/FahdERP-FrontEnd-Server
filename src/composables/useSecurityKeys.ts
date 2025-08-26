@@ -6,8 +6,6 @@ import { onMounted, onUnmounted } from 'vue'
 export function useSecurityKeys() {
   // Lista de teclas bloqueadas
   const blockedKeys = [
-    'F5',           // Refresh
-    'F12',          // DevTools
     'F11',          // Fullscreen (pode ser usado para ocultar barra de endereço)
     'F1',           // Help
     'F3',           // Find
@@ -72,7 +70,6 @@ export function useSecurityKeys() {
     if (blockedKeys.includes(event.key)) {
       event.preventDefault()
       event.stopPropagation()
-      console.warn(`Tecla bloqueada: ${event.key}`)
       return false
     }
 
@@ -86,7 +83,6 @@ export function useSecurityKeys() {
       if (ctrlMatch && shiftMatch && altMatch && keyMatch) {
         event.preventDefault()
         event.stopPropagation()
-        console.warn(`Combinação de teclas bloqueada: ${JSON.stringify(combo)}`)
         return false
       }
     }
@@ -98,7 +94,6 @@ export function useSecurityKeys() {
     // Bloquear menu de contexto (botão direito)
     event.preventDefault()
     event.stopPropagation()
-    console.warn('Menu de contexto bloqueado')
     return false
   }
 
@@ -112,7 +107,7 @@ export function useSecurityKeys() {
   function handleVisibilityChange() {
     // Detectar quando a página perde o foco (possível tentativa de burlar)
     if (document.hidden) {
-      console.warn('Página perdeu o foco - possível tentativa de burlar segurança')
+      // Página perdeu o foco
     }
   }
 
@@ -133,8 +128,6 @@ export function useSecurityKeys() {
     // Desabilitar highlight
     ;(document.body.style as any).webkitTouchCallout = 'none'
     ;(document.body.style as any).webkitTapHighlightColor = 'transparent'
-
-    console.log('Teclas de segurança ativadas')
   }
 
   function disableSecurityKeys() {
@@ -154,8 +147,6 @@ export function useSecurityKeys() {
     // Restaurar highlight
     ;(document.body.style as any).webkitTouchCallout = ''
     ;(document.body.style as any).webkitTapHighlightColor = ''
-
-    console.log('Teclas de segurança desativadas')
   }
 
   // Auto-ativar quando o composable é usado

@@ -67,10 +67,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 // Props e injeções
 const router = useRouter()
-const tabCache = inject('tabCache') as any // Assumindo que o tabCache está disponível via provide/inject
+const authStore = useAuthStore()
+const tabCache = inject('tabCache') as { tabs?: { value?: unknown[] }, clearAllTabs?: () => void } | undefined
 
 // Estado do dropdown
 const isDropdownOpen = ref(false)
@@ -78,11 +80,11 @@ const logoutDropdownRef = ref<HTMLElement | null>(null)
 
 // Computed para verificar abas abertas
 const hasOpenTabs = computed(() => {
-  return tabCache?.tabs?.value?.length > 0 || false
+  return (tabCache?.tabs?.value?.length ?? 0) > 0
 })
 
 const openTabsCount = computed(() => {
-  return tabCache?.tabs?.value?.length || 0
+  return tabCache?.tabs?.value?.length ?? 0
 })
 
 // Controle do dropdown
@@ -103,10 +105,8 @@ const handleLogout = () => {
     tabCache.clearAllTabs()
   }
   
-  // Limpar dados de sessão
-  localStorage.removeItem('auth_token')
-  localStorage.removeItem('user_data')
-  sessionStorage.clear()
+  // Fazer logout usando o store
+  authStore.logout()
   
   // Redirecionar para login
   router.push('/login')
@@ -115,9 +115,8 @@ const handleLogout = () => {
 const handleLock = () => {
   closeDropdown()
   
-  // Implementar lógica de bloqueio
-  // Por enquanto, apenas mostra um alert
-  alert('Funcionalidade de bloqueio será implementada em breve')
+  // Bloquear a tela usando o store
+  authStore.lockApp()
 }
 
 const handleStayConnected = () => {

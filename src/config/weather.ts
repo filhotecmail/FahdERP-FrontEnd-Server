@@ -30,14 +30,14 @@ export const weatherConfig: WeatherConfig = {
   // Localização padrão caso a geolocalização falhe
   defaultLocation: 'São Paulo, Brazil',
   
-  // Timeout para requisições de geolocalização (10 segundos)
-  timeout: 10000,
+  // Timeout para requisições de geolocalização (15 segundos para maior precisão)
+  timeout: 15000,
   
   // Habilitar detecção automática de localização
   enableGeolocation: true,
   
-  // Tempo máximo para cache de localização (5 minutos)
-  maxAge: 300000,
+  // Tempo máximo para cache de localização (30 segundos para dados mais atuais)
+  maxAge: 30000,
   
   // Configuração do Google Gemini AI como fallback
   gemini: {
@@ -199,22 +199,58 @@ export const getUserLocation = (): Promise<{ lat: number; lon: number }> => {
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        })
-      },
-      (error) => {
-        reject(new Error(`Erro de geolocalização: ${error.message}`))
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: weatherConfig.timeout,
-        maximumAge: weatherConfig.maxAge
-      }
-    )
+    let attempts = 0
+    const maxAttempts = 3
+    const targetAccuracy = 50 // metros
+    let bestPosition: GeolocationPosition | null = null
+
+    const tryGetLocation = () => {
+      attempts++
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Armazenar a melhor posição encontrada
+          if (!bestPosition || position.coords.accuracy < bestPosition.coords.accuracy) {
+            bestPosition = position
+          }
+
+          // Se conseguiu precisão excelente ou esgotou tentativas
+          if (position.coords.accuracy <= targetAccuracy || attempts >= maxAttempts) {
+            resolve({
+              lat: parseFloat(position.coords.latitude.toFixed(8)),
+              lon: parseFloat(position.coords.longitude.toFixed(8))
+            })
+          } else {
+            // Tentar novamente após um pequeno delay
+            setTimeout(tryGetLocation, 1000)
+          }
+        },
+        (error) => {
+          if (attempts >= maxAttempts) {
+            if (bestPosition) {
+              // Usar a melhor posição encontrada
+              resolve({
+                lat: parseFloat(bestPosition.coords.latitude.toFixed(8)),
+                lon: parseFloat(bestPosition.coords.longitude.toFixed(8))
+              })
+            } else {
+              reject(new Error(`Erro de geolocalização após ${maxAttempts} tentativas: ${error.message}`))
+            }
+          } else {
+            // Tentar novamente
+            setTimeout(tryGetLocation, 1000)
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0 // Sempre buscar nova localização
+        }
+      )
+    }
+
+    // Iniciar primeira tentativa
+    tryGetLocation()
   })
 }
 
@@ -255,4 +291,56 @@ export const formatWindSpeed = (speed: number, unit: 'kph' | 'mph' = 'kph'): str
 // Função utilitária para determinar se é dia ou noite
 export const isDayTime = (isDay: number): boolean => {
   return isDay === 1
+}
+
+// Função para detectar período do dia baseado no horário local
+export const getTimePeriod = (localtime: string): 'morning' | 'afternoon' | 'evening' | 'night' => {
+  const date = new Date(localtime)
+  const hour = date.getHours()
+  
+  if (hour >= 6 && hour < 12) {
+    return 'morning' // Manhã: 6h às 11h59
+  } else if (hour >= 12 && hour < 18) {
+    return 'afternoon' // Tarde: 12h às 17h59
+  } else if (hour >= 18 && hour < 21) {
+    return 'evening' // Início da noite/pôr do sol: 18h às 20h59
+  } else {
+    return 'night' // Noite: 21h às 5h59
+  }
+}
+
+// Função para obter ícone baseado no período do dia
+export const getTimePeriodIcon = (localtime: string): string => {
+  const period = getTimePeriod(localtime)
+  
+  switch (period) {
+    case 'morning':
+      return '/src/assets/sunrise.svg'
+    case 'afternoon':
+      return '/src/assets/sun.svg'
+    case 'evening':
+      return '/src/assets/sunset.svg'
+    case 'night':
+      return '/src/assets/moon.svg'
+    default:
+      return '/src/assets/sun.svg'
+  }
+}
+
+// Função para obter descrição do período do dia
+export const getTimePeriodDescription = (localtime: string): string => {
+  const period = getTimePeriod(localtime)
+  
+  switch (period) {
+    case 'morning':
+      return 'Manhã'
+    case 'afternoon':
+      return 'Tarde'
+    case 'evening':
+      return 'Início da Noite'
+    case 'night':
+      return 'Noite'
+    default:
+      return 'Dia'
+  }
 }

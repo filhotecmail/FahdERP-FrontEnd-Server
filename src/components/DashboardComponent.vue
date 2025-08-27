@@ -141,8 +141,29 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Componente Dashboard principal da aplicação
+ * 
+ * Exibe métricas de vendas, produtos, lucro e clientes ativos,
+ * além de gráficos de vendas dos últimos 7 dias e agenda do dia.
+ * Permite filtrar dados por data selecionada.
+ * 
+ * @component
+ * @example
+ * ```vue
+ * <template>
+ *   <DashboardComponent />
+ * </template>
+ * ```
+ * 
+ * @since 1.0.0
+ */
 import { ref } from 'vue'
 
+/**
+ * Data atual selecionada para filtrar os dados do dashboard
+ * @type {Ref<string>} Data no formato ISO (YYYY-MM-DD)
+ */
 const currentDate = ref(new Date().toISOString().split('T')[0])
 </script>
 

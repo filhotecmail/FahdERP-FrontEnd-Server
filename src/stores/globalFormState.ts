@@ -1,13 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref, reactive, computed } from 'vue'
 
-// Tipos para o sistema global de formulários
+/**
+ * Campo de formulário com tipo e valor
+ */
 export interface FormField {
   value: unknown
   type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date'
   defaultValue?: unknown
 }
 
+/**
+ * Estado completo de um formulário incluindo campos e metadados
+ */
 export interface FormState {
   fields: Record<string, FormField>
   metadata: {
@@ -18,6 +23,9 @@ export interface FormState {
   }
 }
 
+/**
+ * Estado de paginação para listas e tabelas
+ */
 export interface PaginationState {
   currentPage: number
   itemsPerPage: number
@@ -25,6 +33,9 @@ export interface PaginationState {
   recordsPerPage: number
 }
 
+/**
+ * Estado de filtros e busca
+ */
 export interface FilterState {
   searchTerm: string
   filters: Record<string, { value: unknown }>
@@ -33,11 +44,17 @@ export interface FilterState {
   sortOrder: 'asc' | 'desc'
 }
 
+/**
+ * Estado de seleção de itens
+ */
 export interface SelectionState {
   selectedItems: unknown[]
   selectAll: boolean
 }
 
+/**
+ * Estado da interface do usuário
+ */
 export interface UIState {
   activeTab: string
   sidebarCollapsed: boolean
@@ -45,6 +62,9 @@ export interface UIState {
   loadingStates: Record<string, boolean>
 }
 
+/**
+ * Estado completo de um formulário incluindo todos os sub-estados
+ */
 export interface CompleteFormState {
   form: FormState
   pagination: PaginationState
@@ -53,7 +73,23 @@ export interface CompleteFormState {
   ui: UIState
 }
 
-// Store global para gerenciar estados de todos os formulários
+/**
+ * Store global para gerenciamento de estados de formulários
+ * 
+ * Fornece um sistema centralizado para gerenciar estados de formulários,
+ * incluindo campos, paginação, filtros, seleção e interface do usuário.
+ * Suporta histórico de mudanças, auto-save e persistência local.
+ * 
+ * @example
+ * ```typescript
+ * const formStore = useGlobalFormStateStore()
+ * const formId = formStore.generateFormId('/users', 'UserForm')
+ * formStore.registerForm(formId, '/users', 'UserForm')
+ * formStore.updateField(formId, 'name', 'João Silva', 'string')
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export const useGlobalFormStateStore = defineStore('globalFormState', () => {
   // Estado principal - mapa de formulários por ID único
   const formStates = ref<Record<string, CompleteFormState>>({})
@@ -82,7 +118,22 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
     )
   }))
 
-  // Função para gerar ID único do formulário
+  /**
+   * Gera um ID único para identificar um formulário
+   * 
+   * @param route - Rota da página onde o formulário está localizado
+   * @param component - Nome do componente do formulário
+   * @param instanceId - ID opcional para múltiplas instâncias do mesmo formulário
+   * @returns ID único do formulário
+   * 
+   * @example
+   * ```typescript
+   * const formId = generateFormId('/users', 'UserForm', 'edit-123')
+   * // Resultado: '/users:UserForm:edit-123'
+   * ```
+   * 
+   * @since 1.0.0
+   */
   function generateFormId(route: string, component: string, instanceId?: string): string {
     const base = `${route}:${component}`
     return instanceId ? `${base}:${instanceId}` : base
@@ -126,7 +177,17 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
     }
   }
 
-  // Registrar um novo formulário
+  /**
+   * Registra um novo formulário no sistema global
+   * 
+   * @param formId - ID único do formulário
+   * @param route - Rota da página
+   * @param component - Nome do componente
+   * @param initialState - Estado inicial opcional
+   * @returns Estado completo do formulário registrado
+   * 
+   * @since 1.0.0
+   */
   function registerForm(formId: string, route: string, component: string, initialState?: Partial<CompleteFormState>) {
     if (!formStates.value[formId]) {
       const defaultState = createDefaultFormState(route, component)
@@ -149,7 +210,16 @@ export const useGlobalFormStateStore = defineStore('globalFormState', () => {
     return formStates.value[formId] || null
   }
 
-  // Atualizar campo específico
+  /**
+   * Atualiza um campo específico do formulário
+   * 
+   * @param formId - ID do formulário
+   * @param fieldName - Nome do campo
+   * @param value - Novo valor do campo
+   * @param type - Tipo do campo (padrão: 'string')
+   * 
+   * @since 1.0.0
+   */
   function updateField(formId: string, fieldName: string, value: unknown, type: FormField['type'] = 'string') {
     if (!formStates.value[formId]) return
     

@@ -34,31 +34,81 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Componente seletor de temas da aplicação
+ * 
+ * Permite alternar entre os temas disponíveis (Light, Dark, Dracula)
+ * através de um dropdown com preview visual de cada tema.
+ * 
+ * @component
+ * @example
+ * ```vue
+ * <template>
+ *   <ThemeSelector />
+ * </template>
+ * ```
+ * 
+ * @since 1.0.0
+ */
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useThemeStore, type ThemeType } from '@/stores/theme'
 
 const themeStore = useThemeStore()
+
+/**
+ * Estado de abertura do dropdown
+ * @type {Ref<boolean>}
+ */
 const isOpen = ref(false)
 
+/**
+ * Lista de temas disponíveis para seleção
+ * @type {Array<{value: ThemeType, label: string}>}
+ */
 const availableThemes = [
   { value: 'light' as ThemeType, label: 'Light' },
   { value: 'dark' as ThemeType, label: 'Dark' },
   { value: 'dracula' as ThemeType, label: 'Dracula VSCode' }
 ]
 
+/**
+ * Alterna a visibilidade do dropdown de temas
+ * 
+ * @since 1.0.0
+ */
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value
 }
 
+/**
+ * Seleciona um tema específico e fecha o dropdown
+ * 
+ * @param theme - Tipo do tema a ser aplicado
+ * @since 1.0.0
+ */
 const selectTheme = (theme: ThemeType) => {
   themeStore.setTheme(theme)
   isOpen.value = false
 }
 
+/**
+ * Obtém o rótulo de exibição para um tema
+ * 
+ * @param theme - Tipo do tema
+ * @returns Rótulo do tema ou 'Dark' como padrão
+ * @since 1.0.0
+ */
 const getThemeLabel = (theme: ThemeType) => {
   return availableThemes.find(t => t.value === theme)?.label || 'Dark'
 }
 
+/**
+ * Gera o estilo de preview visual para um tema
+ * 
+ * @param theme - Tipo do tema
+ * @returns Objeto com estilos CSS para preview
+ * @since 1.0.0
+ */
 const getThemePreview = (theme: ThemeType) => {
   const themeVars = themeStore.themes[theme]
   return {
@@ -67,7 +117,12 @@ const getThemePreview = (theme: ThemeType) => {
   }
 }
 
-// Fechar dropdown ao clicar fora
+/**
+ * Fecha o dropdown quando o usuário clica fora do componente
+ * 
+ * @param event - Evento de clique do mouse
+ * @since 1.0.0
+ */
 const handleClickOutside = (event: Event) => {
   const target = event.target as HTMLElement
   if (!target.closest('.theme-selector')) {

@@ -2,6 +2,17 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { LockState, LOCK_STATE_STORAGE_KEY, type LockStateData } from '@/types/lockState'
 
+/**
+ * Interface que define os dados do usuário autenticado
+ * 
+ * @interface UserData
+ * @property username - Nome de usuário para autenticação
+ * @property cnpj - CNPJ da empresa do usuário
+ * @property selectedStore - ID da loja selecionada pelo usuário
+ * @property selectedStoreName - Nome da loja selecionada
+ * @property password - Senha do usuário (armazenada para validações)
+ * @property rememberMe - Flag para persistir dados no localStorage
+ */
 export interface UserData {
   username: string
   cnpj: string
@@ -11,6 +22,39 @@ export interface UserData {
   rememberMe: boolean
 }
 
+/**
+ * Store para gerenciamento de autenticação e estado de bloqueio da aplicação
+ * 
+ * Fornece funcionalidades completas de autenticação incluindo login, logout,
+ * persistência de sessão, validação de senha e gerenciamento de estado de bloqueio.
+ * Suporta sincronização entre múltiplas abas/janelas da aplicação.
+ * 
+ * @example
+ * ```typescript
+ * const authStore = useAuthStore()
+ * 
+ * // Login do usuário
+ * authStore.login({
+ *   username: 'admin',
+ *   cnpj: '12.345.678/0001-90',
+ *   selectedStore: '001',
+ *   selectedStoreName: 'Loja Principal',
+ *   password: 'senha123',
+ *   rememberMe: true
+ * })
+ * 
+ * // Verificar autenticação
+ * if (authStore.isAuthenticated) {
+ *   console.log('Usuário logado:', authStore.userDisplayName)
+ * }
+ * 
+ * // Bloquear/desbloquear aplicação
+ * authStore.lockApp()
+ * authStore.unlockApp()
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export const useAuthStore = defineStore('auth', () => {
   // Estado do usuário
   const user = ref<UserData | null>(null)

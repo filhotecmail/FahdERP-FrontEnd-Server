@@ -1,8 +1,28 @@
 import { defineStore } from 'pinia'
 import { ref, watch, computed } from 'vue'
 
+/**
+ * Tipos de tema disponíveis na aplicação
+ */
 export type ThemeType = 'light' | 'dark' | 'dracula'
 
+/**
+ * Store para gerenciamento de temas da aplicação
+ * 
+ * Fornece funcionalidades para alternar entre temas (light, dark, dracula),
+ * persistir preferências do usuário e aplicar variáveis CSS dinamicamente.
+ * Suporta detecção automática de preferência do sistema.
+ * 
+ * @example
+ * ```typescript
+ * const themeStore = useThemeStore()
+ * themeStore.initTheme() // Inicializa com preferência salva ou do sistema
+ * themeStore.setTheme('dark') // Define tema específico
+ * themeStore.toggleTheme() // Alterna entre os temas disponíveis
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export const useThemeStore = defineStore('theme', () => {
   const currentTheme = ref<ThemeType>('dark')
   
@@ -72,7 +92,14 @@ export const useThemeStore = defineStore('theme', () => {
     }
   }
   
-  // Verificar preferência salva ou preferência do sistema
+  /**
+   * Inicializa o tema da aplicação
+   * 
+   * Verifica se existe uma preferência salva no localStorage,
+   * caso contrário, usa a preferência do sistema operacional.
+   * 
+   * @since 1.0.0
+   */
   const initTheme = () => {
     const savedTheme = localStorage.getItem('fahd-erp-theme') as ThemeType
     if (savedTheme && themes[savedTheme]) {
@@ -83,7 +110,14 @@ export const useThemeStore = defineStore('theme', () => {
     applyTheme()
   }
   
-  // Aplicar tema ao documento
+  /**
+   * Aplica as variáveis CSS do tema atual ao documento
+   * 
+   * Define as propriedades CSS customizadas no elemento raiz
+   * para que sejam aplicadas em toda a aplicação.
+   * 
+   * @since 1.0.0
+   */
   const applyTheme = () => {
     const root = document.documentElement
     const themeVars = themes[currentTheme.value]
@@ -93,14 +127,32 @@ export const useThemeStore = defineStore('theme', () => {
     })
   }
   
-  // Definir tema específico
+  /**
+   * Define um tema específico
+   * 
+   * @param theme - Tipo do tema a ser aplicado
+   * 
+   * @example
+   * ```typescript
+   * setTheme('dark') // Aplica o tema escuro
+   * setTheme('light') // Aplica o tema claro
+   * ```
+   * 
+   * @since 1.0.0
+   */
   const setTheme = (theme: ThemeType) => {
     currentTheme.value = theme
     localStorage.setItem('fahd-erp-theme', theme)
     applyTheme()
   }
   
-  // Alternar tema (manter compatibilidade)
+  /**
+   * Alterna entre os temas disponíveis em sequência
+   * 
+   * Cicla entre light → dark → dracula → light...
+   * 
+   * @since 1.0.0
+   */
   const toggleTheme = () => {
     const themes: ThemeType[] = ['light', 'dark', 'dracula']
     const currentIndex = themes.indexOf(currentTheme.value)

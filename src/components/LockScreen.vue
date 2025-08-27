@@ -54,10 +54,35 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Componente de tela de bloqueio da aplicação
+ * 
+ * Exibe uma tela de bloqueio com data/hora atual, informações do usuário
+ * e campo de senha para desbloqueio. Inclui validação de senha e
+ * atualização automática de data/hora.
+ * 
+ * @component
+ * @example
+ * ```vue
+ * <template>
+ *   <LockScreen 
+ *     :is-locked="isLocked" 
+ *     @unlock="handleUnlock"
+ *     @lock-error="handleError"
+ *   />
+ * </template>
+ * ```
+ * 
+ * @since 1.0.0
+ */
 import { ref, onMounted, onUnmounted, nextTick, watch, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
 
-// Props
+/**
+ * Props do componente LockScreen
+ * @interface Props
+ * @property isLocked - Se a tela de bloqueio deve ser exibida
+ */
 interface Props {
   isLocked?: boolean
 }
@@ -73,7 +98,11 @@ const authStore = useAuthStore()
 const userDisplayName = computed(() => authStore.userDisplayName || 'Usuário')
 const userStore = computed(() => authStore.userStore || 'Loja não selecionada')
 
-// Emits
+/**
+ * Eventos emitidos pelo componente
+ * @event unlock - Emitido quando o usuário é desbloqueado com sucesso
+ * @event lockError - Emitido quando ocorre erro no desbloqueio
+ */
 const emit = defineEmits<{
   unlock: []
   lockError: [message: string]
@@ -90,7 +119,12 @@ const passwordInput = ref<HTMLInputElement>()
 // Timer para atualizar data/hora
 let timeInterval: NodeJS.Timeout | null = null
 
-// Função para atualizar data e hora
+/**
+ * Atualiza a data e hora exibidas na tela de bloqueio
+ * Formata a hora no padrão brasileiro (HH:MM) e a data por extenso
+ * 
+ * @since 1.0.0
+ */
 const updateDateTime = () => {
   const now = new Date()
   
@@ -109,7 +143,14 @@ const updateDateTime = () => {
   })
 }
 
-// Função para desbloquear
+/**
+ * Valida a senha e desbloqueia a aplicação
+ * 
+ * Verifica se a senha está preenchida e se corresponde à senha do usuário.
+ * Emite eventos de sucesso ou erro conforme o resultado da validação.
+ * 
+ * @since 1.0.0
+ */
 const unlock = async () => {
   if (!password.value.trim()) {
     errorMessage.value = 'Digite a senha'

@@ -114,6 +114,7 @@ import { useRouter } from 'vue-router'
 import { useToast, POSITION } from 'vue-toastification'
 import { useThemeStore } from '../stores/theme'
 import { useAuthStore } from '../stores/auth'
+import backendRouter from '@/utils/backendRouter'
 
 const router = useRouter()
 const toast = useToast()
@@ -121,6 +122,7 @@ const themeStore = useThemeStore()
 const authStore = useAuthStore()
 const isDark = computed(() => themeStore.isDark)
 const isLoading = ref(false)
+const isLoadingStores = ref(false)
 
 // Campos do formulário usando ref simples
 const formData = {
@@ -131,26 +133,159 @@ const formData = {
   rememberMe: ref(false)
 }
 
-
-
-// Lista de lojas disponíveis (simulação - em produção viria da API)
-const availableStores = ref([
-  { id: '1', name: 'Matriz - Centro', cnpj: '12.345.678/0001-90' },
-  { id: '2', name: 'Filial 01 - Shopping', cnpj: '12.345.678/0002-71' },
-  { id: '3', name: 'Filial 02 - Norte', cnpj: '12.345.678/0003-52' },
-  { id: '4', name: 'Filial 03 - Sul', cnpj: '12.345.678/0004-33' }
-])
+// Lista de lojas disponíveis (será populada pela API)
+const availableStores = ref<Store[]>([])
 
 // Computed para mostrar/ocultar o combobox de lojas
 const showStoreSelector = computed(() => {
-  return formData.cnpj.value && formData.cnpj.value.trim().length > 0
+  return availableStores.value.length > 0
 })
 
+// Função para validar CNPJ
+const isValidCNPJ = (cnpj: string): boolean => {
+  // Remove caracteres não numéricos
+  const cleanCnpj = cnpj.replace(/\D/g, '')
+  
+  // Verifica se tem 14 dígitos
+  if (cleanCnpj.length !== 14) return false
+  
+  // Verifica se não são todos os dígitos iguais
+  if (/^(\d)\1+$/.test(cleanCnpj)) return false
+  
+  // Validação dos dígitos verificadores
+  let soma = 0
+  let pos = 5
+  
+  // Primeiro dígito verificador
+  for (let i = 0; i < 12; i++) {
+    soma += parseInt(cleanCnpj.charAt(i)) * pos--
+    if (pos < 2) pos = 9
+  }
+  
+  let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
+  if (resultado !== parseInt(cleanCnpj.charAt(12))) return false
+  
+  // Segundo dígito verificador
+  soma = 0
+  pos = 6
+  for (let i = 0; i < 13; i++) {
+    soma += parseInt(cleanCnpj.charAt(i)) * pos--
+    if (pos < 2) pos = 9
+  }
+  
+  resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
+  return resultado === parseInt(cleanCnpj.charAt(13))
+}
+
+// Definir interface para o tipo de loja da API
+interface StoreFromAPI {
+  idpk: number
+  cnpj: string
+  fk: number
+  xnome: string
+  xfant: string
+  im: string
+  cnae: string
+  crt: number
+  crtstr: string
+  ie: string
+  iest: string | null
+  tipo: number
+  filialcnpj: string | null
+  tipostr: string
+  suframa: string | null
+  alias: string
+  id: number
+  doccpfcnpj: string
+  contratonro: string
+}
+
+// Definir interface para o tipo de loja no select
+interface Store {
+  id: string
+  name: string
+  cnpj: string
+}
+
+// Função para buscar lojas por CNPJ
+const fetchStoresByCnpj = async (cnpj: string) => {
+  const cleanCnpj = cnpj.replace(/\D/g, '')
+  
+  if (cleanCnpj.length !== 14) {
+    console.warn('⚠️ CNPJ deve ter 14 dígitos')
+    return
+  }
+
+  isLoadingStores.value = true
+  availableStores.value = []
+
+  try {
+    console.log('🔍 Buscando lojas para CNPJ:', cleanCnpj)
+    
+    const response = await backendRouter.getStoresByContract(cleanCnpj)
+
+    if (response.status === 200 && response.data) {
+      console.log('✅ Lojas encontradas:', response.data)
+      
+      // Verificar se response.data é um array antes de mapear
+      if (Array.isArray(response.data)) {
+        // Mapear dados da API para o formato esperado
+        availableStores.value = response.data.map((store: StoreFromAPI) => ({
+          id: String(store.id),
+          name: store.alias,
+          cnpj: store.cnpj
+        }))
+        
+        console.log('📋 Lojas mapeadas:', availableStores.value)
+      } else {
+        console.error('❌ Dados recebidos não são um array:', response.data)
+        toast.error('Formato de dados inválido recebido do servidor', {
+          position: POSITION.TOP_RIGHT,
+          timeout: 4000
+        })
+      }
+    } else {
+      console.error('❌ Erro ao buscar lojas:', response.error)
+      toast.error(response.error || 'Erro ao buscar lojas', {
+        position: POSITION.TOP_RIGHT,
+        timeout: 4000
+      })
+    }
+  } catch (error) {
+    console.error('🚨 Erro na requisição:', error)
+    toast.error('Erro ao conectar com o servidor', {
+      position: POSITION.TOP_RIGHT,
+      timeout: 4000
+    })
+  } finally {
+    isLoadingStores.value = false
+  }
+}
+
 // Função para lidar com mudanças no CNPJ
-const onCnpjChange = () => {
-  // Limpar seleção de loja quando CNPJ for alterado
-  if (!formData.cnpj.value || formData.cnpj.value.trim().length === 0) {
-    formData.selectedStore.value = ''
+const onCnpjChange = async () => {
+  // Limpar seleção de loja e lista de lojas quando CNPJ for alterado
+  formData.selectedStore.value = ''
+  availableStores.value = []
+  
+  const cnpj = formData.cnpj.value
+  
+  if (!cnpj || cnpj.trim().length === 0) {
+    return
+  }
+  
+  // Verificar se o CNPJ está completo e válido
+  const cleanCnpj = cnpj.replace(/\D/g, '')
+  
+  if (cleanCnpj.length === 14) {
+    if (isValidCNPJ(cnpj)) {
+      await fetchStoresByCnpj(cnpj)
+    } else {
+      toast.error('CNPJ inválido. Verifique os dígitos digitados.', {
+        position: POSITION.TOP_RIGHT,
+        timeout: 4000
+      })
+    }
   }
 }
 
@@ -167,36 +302,41 @@ const handleLogin = async () => {
   isLoading.value = true
   
   try {
-    // Simular chamada de API
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Obter dados da loja selecionada
+    const selectedStore = availableStores.value.find(s => s.id === formData.selectedStore.value)
     
-    // Validação com dados mockados
-    const validCnpj = '9999999999999'
-    const validUsername = 'filhotecmail@gmail.com'
-    const validPassword = '@1234'
-    
-    if (formData.cnpj.value && formData.cnpj.value.replace(/\D/g, '') === validCnpj && 
-        formData.username.value === validUsername && 
-        formData.password.value === validPassword) {
-      
-      const selectedStoreName = availableStores.value.find(s => s.id === formData.selectedStore.value)?.name || ''
+    if (!selectedStore) {
+      toast.error('Loja selecionada não encontrada.', {
+        position: POSITION.TOP_RIGHT,
+        timeout: 4000
+      })
+      return
+    }
+
+    // Preparar parâmetros para autenticação
+    const authParams = {
+      cnpjLoja: selectedStore.cnpj,
+      cnpjMaster: formData.cnpj.value,
+      username: formData.username.value,
+      password: formData.password.value
+    }
+
+    console.log('🔐 Tentando autenticar com:', authParams)
+
+    // Chamar API de autenticação
+    const response = await backendRouter.authenticate(authParams)
+
+    if (response.status === 200 && response.data) {
+      console.log('✅ Autenticação bem-sucedida:', response.data)
       
       // Salvar dados do usuário no store de autenticação
       authStore.login({
         username: formData.username.value,
         cnpj: formData.cnpj.value,
         selectedStore: formData.selectedStore.value,
-        selectedStoreName,
+        selectedStoreName: selectedStore.name,
         password: formData.password.value,
         rememberMe: formData.rememberMe.value
-      })
-      
-      console.log('Login bem-sucedido:', {
-        username: formData.username.value,
-        cnpj: formData.cnpj.value,
-        selectedStore: formData.selectedStore.value,
-        rememberMe: formData.rememberMe.value,
-        selectedStoreName
       })
       
       // Mostrar notificação de sucesso
@@ -210,23 +350,19 @@ const handleLogin = async () => {
         router.push('/dashboard')
       }, 1500)
     } else {
-      toast.error('Credenciais inválidas!', {
+      console.error('❌ Falha na autenticação:', response.error)
+      toast.error(response.error || 'Credenciais inválidas!', {
         position: POSITION.TOP_RIGHT,
         timeout: 5000
       })
-      
-      // Mostrar informações de login válido após um pequeno delay
-      setTimeout(() => {
-        toast.info('Use as credenciais: CNPJ: 9999999999999, Usuário: filhotecmail@gmail.com, Senha: @1234', {
-          position: POSITION.TOP_RIGHT,
-          timeout: 8000
-        })
-      }, 1000)
     }
     
   } catch (error) {
-    console.error('Erro no login:', error)
-    alert('Erro interno do sistema. Tente novamente.')
+    console.error('🚨 Erro no login:', error)
+    toast.error('Erro interno do sistema. Tente novamente.', {
+      position: POSITION.TOP_RIGHT,
+      timeout: 5000
+    })
   } finally {
     isLoading.value = false
   }

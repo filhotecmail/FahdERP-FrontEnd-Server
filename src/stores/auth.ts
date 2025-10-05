@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { LockState, LOCK_STATE_STORAGE_KEY, type LockStateData } from '@/types/lockState'
+import type { AuthResponse } from '@/utils/backendRouter'
 
 /**
  * Interface que define os dados do usuário autenticado
@@ -12,6 +13,7 @@ import { LockState, LOCK_STATE_STORAGE_KEY, type LockStateData } from '@/types/l
  * @property selectedStoreName - Nome da loja selecionada
  * @property password - Senha do usuário (armazenada para validações)
  * @property rememberMe - Flag para persistir dados no localStorage
+ * @property authData - Dados completos retornados pela API de autenticação
  */
 export interface UserData {
   username: string
@@ -20,6 +22,7 @@ export interface UserData {
   selectedStoreName: string
   password: string
   rememberMe: boolean
+  authData?: AuthResponse
 }
 
 /**
@@ -373,6 +376,58 @@ export const useAuthStore = defineStore('auth', () => {
     saveLockState()
   })
 
+  /**
+   * Carrega os dados de autenticação do localStorage
+   * 
+   * @returns {AuthResponse | null} Dados de autenticação ou null se não encontrados
+   */
+  function getAuthData(): AuthResponse | null {
+    try {
+      const authData = localStorage.getItem('authData')
+      return authData ? JSON.parse(authData) : null
+    } catch (error) {
+      console.error('Erro ao carregar dados de autenticação:', error)
+      return null
+    }
+  }
+
+  /**
+   * Obtém o token JWT do localStorage
+   * 
+   * @returns {string | null} Token JWT ou null se não encontrado
+   */
+  function getAuthToken(): string | null {
+    return localStorage.getItem('authToken')
+  }
+
+  /**
+   * Verifica se o usuário está autenticado baseado no token
+   * 
+   * @returns {boolean} True se há um token válido
+   */
+  function hasValidToken(): boolean {
+    const token = getAuthToken()
+    const authData = getAuthData()
+    
+    if (!token || !authData) return false
+    
+    // Verificar se o token não expirou
+    try {
+      const expiredDate = new Date(authData.login.expireddh)
+      return expiredDate > new Date()
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * Limpa os dados de autenticação do localStorage
+   */
+  function clearAuthData(): void {
+    localStorage.removeItem('authData')
+    localStorage.removeItem('authToken')
+  }
+
   return {
     // Estado
     user: currentUser,
@@ -393,6 +448,12 @@ export const useAuthStore = defineStore('auth', () => {
     lockApp,
     unlockApp,
     restoreLockState,
-    startLockStateMonitoring
+    startLockStateMonitoring,
+    
+    // Novos métodos para dados de autenticação
+    getAuthData,
+    getAuthToken,
+    hasValidToken,
+    clearAuthData
   }
 })

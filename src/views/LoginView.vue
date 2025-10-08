@@ -80,7 +80,7 @@
             Lembrar-me
           </label>
           
-          <button type="button" class="forgot-password">Esqueci minha senha</button>
+          <button type="button" class="forgot-password" @click="openPasswordRecoveryModal">Esqueci minha senha</button>
         </div>
         
         <button type="submit" class="login-button" :disabled="isLoading">
@@ -105,6 +105,16 @@
         <path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M12 4A8 8 0 0 1 20 12A8 8 0 0 1 12 20V4Z"/>
       </svg>
     </button>
+
+    <!-- Modal de Recuperação de Senha -->
+    <PasswordRecoveryModal
+      :is-visible="isPasswordRecoveryModalVisible"
+      :username="formData.username.value"
+      :cnpj-contrato="formData.cnpj.value"
+      :cnpj-loja="availableStores.find(s => s.id === formData.selectedStore.value)?.cnpj || formData.cnpj.value"
+      @close="closePasswordRecoveryModal"
+      @success="onPasswordRecoverySuccess"
+    />
   </div>
 </template>
 
@@ -115,6 +125,7 @@ import { useToast, POSITION } from 'vue-toastification'
 import { useThemeStore } from '../stores/theme'
 import { useAuthStore } from '../stores/auth'
 import backendRouter from '@/utils/backendRouter'
+import PasswordRecoveryModal from '@/components/PasswordRecoveryModal.vue'
 
 const router = useRouter()
 const toast = useToast()
@@ -123,6 +134,9 @@ const authStore = useAuthStore()
 const isDark = computed(() => themeStore.isDark)
 const isLoading = ref(false)
 const isLoadingStores = ref(false)
+
+// Estado do modal de recuperação de senha
+const isPasswordRecoveryModalVisible = ref(false)
 
 // Campos do formulário usando ref simples
 const formData = {
@@ -370,6 +384,47 @@ const handleLogin = async () => {
 
 const toggleTheme = () => {
   themeStore.toggleTheme()
+}
+
+// Funções do modal de recuperação de senha
+const openPasswordRecoveryModal = () => {
+  // Validar se os campos necessários estão preenchidos
+  if (!formData.cnpj.value.trim()) {
+    toast.warning('Por favor, preencha o CNPJ do contrato antes de recuperar a senha.', {
+      position: POSITION.TOP_RIGHT,
+      timeout: 4000
+    })
+    return
+  }
+
+  if (!formData.selectedStore.value && showStoreSelector.value) {
+    toast.warning('Por favor, selecione uma loja antes de recuperar a senha.', {
+      position: POSITION.TOP_RIGHT,
+      timeout: 4000
+    })
+    return
+  }
+
+  if (!formData.username.value.trim()) {
+    toast.warning('Por favor, preencha o usuário antes de recuperar a senha.', {
+      position: POSITION.TOP_RIGHT,
+      timeout: 4000
+    })
+    return
+  }
+
+  isPasswordRecoveryModalVisible.value = true
+}
+
+const closePasswordRecoveryModal = () => {
+  isPasswordRecoveryModalVisible.value = false
+}
+
+const onPasswordRecoverySuccess = () => {
+  toast.success('Senha temporária enviada! Verifique seu email e faça login com a nova senha.', {
+    position: POSITION.TOP_RIGHT,
+    timeout: 6000
+  })
 }
 </script>
 

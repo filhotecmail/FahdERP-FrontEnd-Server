@@ -18,108 +18,6 @@
       </div>
 
       <div class="esocial-form">
-        <!-- Seção: Filtros de Consulta -->
-        <div class="form-section">
-          <h2 class="section-title">
-            <div class="section-title-content">
-              <svg class="section-icon" viewBox="0 0 24 24">
-                <path d="M14,12V19.88C14.04,20.18 13.94,20.5 13.71,20.71C13.32,21.1 12.69,21.1 12.3,20.71L10.29,18.7C10.06,18.47 9.96,18.16 10,17.87V12H9.97L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L14.03,12H14Z"/>
-              </svg>
-              Filtros de Consulta
-            </div>
-            <button class="toggle-filters-btn" title="Expandir filtros">
-              <svg class="toggle-icon" viewBox="0 0 24 24">
-                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
-              </svg>
-            </button>
-          </h2>
-
-          <div class="filters-content">
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="filterNome" class="form-label">Nome do Usuário</label>
-                <input
-                   id="filterNome"
-                   type="text"
-                   class="form-input"
-                   placeholder="Digite o nome do usuário"
-                 />
-              </div>
-
-              <div class="form-group">
-                <label for="filterEmail" class="form-label">E-mail</label>
-                <input
-                   id="filterEmail"
-                   type="email"
-                   class="form-input"
-                   placeholder="Digite o e-mail"
-                 />
-              </div>
-
-              <div class="form-group">
-                <label for="filterStatus" class="form-label">Status</label>
-                <select
-                   id="filterStatus"
-                   class="form-input"
-                 >
-                  <option value="">Todos os status</option>
-                  <option value="ativo">Ativo</option>
-                  <option value="inativo">Inativo</option>
-                  <option value="bloqueado">Bloqueado</option>
-                  <option value="pendente">Pendente</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="filterPerfil" class="form-label">Perfil de Acesso</label>
-                <select
-                   id="filterPerfil"
-                   class="form-input"
-                 >
-                  <option value="">Todos os perfis</option>
-                  <option value="admin">Administrador</option>
-                  <option value="usuario">Usuário</option>
-                  <option value="operador">Operador</option>
-                  <option value="consulta">Consulta</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="filterDataInicio" class="form-label">Data de Cadastro</label>
-                <input
-                   id="filterDataInicio"
-                   type="date"
-                   class="form-input"
-                 />
-              </div>
-
-              <div class="form-group">
-                <label for="filterDataFim" class="form-label">Data Fim</label>
-                <input
-                   id="filterDataFim"
-                   type="date"
-                   class="form-input"
-                 />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24">
-                  <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
-                </svg>
-                Aplicar Filtros
-              </button>
-              <button type="button" class="btn btn-secondary">
-                <svg class="btn-icon" viewBox="0 0 24 24">
-                  <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                </svg>
-                Limpar Filtros
-              </button>
-            </div>
-          </div>
-        </div>
-
         <!-- Seção: Dados dos Usuários -->
         <div class="form-section">
           <h2 class="section-title">
@@ -135,11 +33,13 @@
             <div class="table-controls-left">
               <div class="items-per-page">
                 <label for="itemsPerPage">Mostrar</label>
-                <select id="itemsPerPage" class="form-input small">
+                <select id="itemsPerPage" class="form-input small" v-model="limit">
+                  <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="25">25</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
+                  <option value="10000000">Todos</option>
                 </select>
                 <span>registros</span>
               </div>
@@ -150,6 +50,8 @@
                   type="text"
                   class="form-input"
                   placeholder="Buscar usuários..."
+                  v-model="searchQuery"
+                  @keydown.enter.prevent="page = 1; loadUsers()"
                 />
                 <svg class="search-icon" viewBox="0 0 24 24">
                   <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
@@ -167,8 +69,11 @@
                     <div class="checkbox-placeholder"></div>
                   </th>
                   <th>Nome</th>
+                  <th>Sobrenome</th>
                   <th>E-mail</th>
-                  <th>Perfil</th>
+                  <th>Nroº CPF</th>
+                  <th>Grupo</th>
+                  <th>Cargo</th>
                   <th>Status</th>
                   <th>Data Cadastro</th>
                   <th>Último Acesso</th>
@@ -176,7 +81,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr v-if="!loading && users.length === 0">
                   <td colspan="8" class="empty-state">
                     <div class="empty-content">
                       <svg class="empty-icon" viewBox="0 0 24 24">
@@ -187,6 +92,24 @@
                     </div>
                   </td>
                 </tr>
+                <tr v-else v-for="u in users" :key="u.idpk">
+                  <td class="checkbox-column">
+                    <div class="checkbox-placeholder"></div>
+                  </td>
+                  <td>{{ u.nome }}</td>
+                  <td>{{ u.sobrenome }}</td>
+                  <td>{{ u.email }}</td>
+                  <td>{{ u.cpf }}</td>
+                  <td>{{ u.grupo }}</td>
+                  <td>{{ u.cargo }}</td>
+                  <td>{{ u.statusstr }}</td>
+                  <td>{{ formatBR12(u.dhc) }}</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>
+                    <div class="btn btn-secondary">Detalhes</div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -194,12 +117,12 @@
           <!-- Paginação -->
           <div class="pagination-container">
             <div class="pagination-info">
-              <span>Mostrando 0 de 0 registros</span>
+              <span>Mostrando {{ users.length }} de {{ total }} registros</span>
             </div>
             <div class="pagination-controls">
-              <div class="btn btn-secondary disabled">Anterior</div>
-              <span class="page-info">Página 1 de 1</span>
-              <div class="btn btn-secondary disabled">Próxima</div>
+              <button class="btn btn-secondary" :class="{ disabled: page === 1 }" @click="prevPage">Anterior</button>
+              <span class="page-info">Página {{ page }} de {{ pages }}</span>
+              <button class="btn btn-secondary" :class="{ disabled: page === pages }" @click="nextPage">Próxima</button>
             </div>
           </div>
 
@@ -230,6 +153,188 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import backendRouter from '@/utils/backendRouter'
+import { formatBR12 } from '@/utils/dateTime'
+
+interface UserDoc {
+  idpk: number
+  masteridpk: number
+  cnpjcontrato: string
+  username: string
+  idpkloja: number
+  status: number,
+  statusstr: string,
+  dhc: string,
+  grupo: string,
+  idpk1: number
+  fkkey: number
+  nome: string
+  sobrenome: string
+  nascimento: string
+  cpf: string
+  rg: string
+  nrocelular: string
+  email: string
+  cargo: string
+  foto: string | null
+  logr: string
+  nrolog: string
+  compl: string | null
+  bairro: string
+  municipio: string
+  uf: string
+  cep: string
+}
+
+interface UserPaginateResponse {
+  docs: UserDoc[]
+  total: number
+  limit: number
+  page: number
+  pages: number
+}
+
+// Estado da tabela e paginação
+const users = ref<UserDoc[]>([])
+const total = ref(0)
+const limit = ref(10)
+const page = ref(1)
+const pages = ref(1)
+
+// Adapta diferentes formatos de resposta da API para paginação
+function normalizePaginateResponse(data: unknown): UserPaginateResponse {
+  if (Array.isArray(data)) {
+    return {
+      docs: data as UserDoc[],
+      total: (data as UserDoc[]).length,
+      limit: limit.value,
+      page: page.value,
+      pages: 1
+    }
+  }
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    const payload = (obj.data && typeof obj.data === 'object') ? obj.data as Record<string, unknown> : obj
+    const docs = (payload.docs as UserDoc[]) || (payload.items as UserDoc[]) || []
+    const totalNum = Number(payload.total ?? (payload.count ?? docs.length))
+    const limitNum = Number(payload.limit ?? limit.value)
+    const pageNum = Number(payload.page ?? page.value)
+    const pagesNum = Number(payload.pages ?? Math.max(1, Math.ceil(totalNum / (limitNum || 1))))
+    return { docs, total: totalNum, limit: limitNum, page: pageNum, pages: pagesNum }
+  }
+  return { docs: [], total: 0, limit: limit.value, page: page.value, pages: 1 }
+}
+
+const cnpjcontrato = ref('')
+const idpkloja = ref('')
+
+const loading = ref(false)
+
+function hydrateAuthFilters() {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('authData') : null
+    if (raw) {
+      const auth = JSON.parse(raw) as {
+        SystemAuth?: { CnpjContrato?: string }
+        Lojas?: { IdPk?: number }
+      }
+      cnpjcontrato.value = (auth.SystemAuth?.CnpjContrato || '').replace(/\D/g, '')
+      idpkloja.value = String(auth.Lojas?.IdPk ?? '')
+    }
+  } catch (e) {
+    console.warn('Não foi possível hidratar filtros a partir do authData:', e)
+  }
+}
+
+async function loadUsers() {
+  loading.value = true
+  try {
+    const params: Record<string, string | number> = {
+      cnpjcontrato: String(cnpjcontrato.value ?? ''),
+      idpkloja: String(idpkloja.value ?? ''),
+      limit: Number(limit.value),
+      page: Number(page.value),
+    }
+    const q = searchQuery.value.trim()
+    if (q) {
+      params.search = q
+      params.q = q
+    }
+    const resp = await backendRouter.get<UserPaginateResponse>(
+      '/api/user/paginate',
+      params,
+      { headers: { 'X-Paginate': 'true' } }
+    )
+    if (resp.status === 200 && resp.data !== undefined) {
+      const data = normalizePaginateResponse(resp.data)
+      users.value = data.docs
+      total.value = data.total
+      // mantém o limit selecionado pelo usuário
+      page.value = data.page
+      // recalcula pages com base no total e no limit atual
+      pages.value = Math.max(1, Math.ceil((total.value || 0) / (limit.value || 1)))
+      console.log('👥 Users mapeados:', { total: total.value, page: page.value, pages: pages.value, docs: users.value.length, limit: limit.value })
+    } else {
+      users.value = []
+      total.value = 0
+      pages.value = 1
+    }
+  } catch (e) {
+    console.error('Erro ao carregar usuários:', e)
+    users.value = []
+    total.value = 0
+    pages.value = 1
+  } finally {
+    loading.value = false
+  }
+}
+
+// Busca no grid
+const searchQuery = ref('')
+
+// Busca client-side desativada; o backend faz filtragem
+// const visibleUsers = computed(() => users.value)
+let searchTimer: number | undefined
+watch(searchQuery, () => {
+  if (searchTimer !== undefined) window.clearTimeout(searchTimer)
+  searchTimer = window.setTimeout(() => {
+    page.value = 1
+    loadUsers()
+  }, 300)
+})
+
+ // Refaz a consulta ao mudar "Mostrar registros"
+ watch(limit, (val) => {
+   limit.value = Number(val)
+   page.value = 1
+   loadUsers()
+ })
+
+ function nextPage() {
+   if (page.value < pages.value) {
+     page.value += 1
+     loadUsers()
+   }
+ }
+
+ function prevPage() {
+   if (page.value > 1) {
+     page.value -= 1
+     loadUsers()
+   }
+ }
+
+ onMounted(() => {
+   hydrateAuthFilters()
+   loadUsers()
+ })
+</script>
+
+<!-- Atualizações no template: tabela e paginação -->
+<!-- Inseriremos apenas os trechos substituídos com bindings Vue -->
+
 <style scoped>
 /* Container principal */
 .user-management-container {
@@ -239,7 +344,7 @@
 }
 
 .form-container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   background: var(--bg-secondary, #ffffff);
   border-radius: 12px;
@@ -674,4 +779,62 @@
     width: 100%;
   }
 }
+
+/* Hover: linhas da tabela */
+.data-table tbody tr {
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.data-table tbody tr:hover td {
+  color: var(--text-primary, #111827);
+}
 </style>
+
+.data-table tbody tr {
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.08); /* azul suave */
+}
+
+.data-table tbody tr:hover td {
+  color: var(--text-primary, #111827);
+}
+
+const loading = ref(false)
+
+function formatDateTime(val: string | number | Date | null | undefined): string {
+  if (val === null || val === undefined || val === '') return '-'
+  try {
+    let date: Date
+    if (typeof val === 'string') {
+      // Strings ISO como "2025-09-15T11:35:20.000Z"
+      date = new Date(val)
+    } else if (typeof val === 'number') {
+      // Timestamps numéricos (ms ou s)
+      const ms = String(val).length === 10 ? val * 1000 : val
+      date = new Date(ms)
+    } else if (val instanceof Date) {
+      date = val
+    } else {
+      return '-'
+    }
+
+    if (isNaN(date.getTime())) {
+      // Fallback: remove T/Z se for string inválida
+      return typeof val === 'string' ? val.replace('T', ' ').replace('Z', '') : '-'
+    }
+
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    })
+  } catch {
+    return '-'
+  }
+}

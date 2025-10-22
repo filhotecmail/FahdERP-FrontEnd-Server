@@ -96,6 +96,7 @@ export class BackendRouter {
     this.baseUrl = `http://${import.meta.env.VITE_BACKENDREST}`
   }
 
+
   /**
    * Método genérico para fazer requisições HTTP
    */
@@ -107,13 +108,23 @@ export class BackendRouter {
       const url = `${this.baseUrl}${endpoint}`
       console.log('🌐 Fazendo requisição para:', url)
 
+      // Merge headers e anexar Authorization com JWT do localStorage
+      const authToken = localStorage.getItem('authToken')
+      const headers = new Headers(options.headers as HeadersInit | undefined)
+      if (authToken) {
+        const existingAuth = headers.get('Authorization') || ''
+        const hasBearerScheme = existingAuth.toLowerCase().startsWith('bearer ')
+        headers.set('Authorization', hasBearerScheme ? existingAuth : `Bearer ${authToken}`)
+      }
+
       const response = await fetch(url, {
         ...options,
+        headers
       })
 
       console.log('📊 Status da resposta:', response.status)
 
-      let data
+      let data: unknown
       const contentType = response.headers.get('content-type')
       console.log('📋 Content-Type:', contentType)
 
@@ -121,8 +132,9 @@ export class BackendRouter {
         if (contentType?.includes('application/json')) {
           data = await response.json()
         } else {
-          data = await response.text()
-          console.log('📄 Resposta não-JSON recebida:', data)
+          const text = await response.text()
+          console.log('📄 Resposta não-JSON recebida:', text)
+          data = text
         }
       } catch (parseError) {
         console.error('🚨 Erro ao fazer parse da resposta:', parseError)
@@ -133,16 +145,21 @@ export class BackendRouter {
 
       if (!response.ok) {
         console.error('❌ Erro na resposta:', data)
+        const errMsg = typeof data === 'string'
+          ? data
+          : (data && typeof data === 'object' && 'error' in (data as Record<string, unknown>)
+              ? String((data as Record<string, unknown>).error)
+              : 'Erro desconhecido')
         return {
           status: response.status,
-          error: typeof data === 'string' ? data : data.error || 'Erro desconhecido'
+          error: errMsg
         }
       }
 
       console.log('✅ Dados recebidos:', data)
       return {
         status: response.status,
-        data
+        data: data as T
       }
     } catch (error) {
       console.error('🚨 Erro na requisição:', error)
@@ -193,7 +210,7 @@ export class BackendRouter {
   /**
    * Método GET genérico
    */
-  async get<T>(endpoint: string, params?: Record<string, string | number>) {
+  async get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestInit) {
     let url = endpoint
     if (params) {
       const searchParams = new URLSearchParams()
@@ -202,7 +219,7 @@ export class BackendRouter {
       })
       url += `?${searchParams.toString()}`
     }
-    return this.makeRequest<T>(url)
+    return this.makeRequest<T>(url, options)
   }
 
   /**

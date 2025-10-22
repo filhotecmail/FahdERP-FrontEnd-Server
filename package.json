@@ -19,9 +19,11 @@
     "generate": "node scripts/generate-component.js",
     "generate:component": "node scripts/generate-component.js",
     "generate:esocial": "node scripts/generate-esocial.js",
+    "generate:crud": "node scripts/generate-crud.js",
     "g": "node scripts/generate-component.js",
     "g:c": "node scripts/generate-component.js",
-    "g:e": "node scripts/generate-esocial.js"
+    "g:e": "node scripts/generate-esocial.js",
+    "g:crud": "node scripts/generate-crud.js"
   },
   "dependencies": {
     "@vee-validate/yup": "^4.15.1",

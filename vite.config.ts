@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => ({
     vue(),
     vueDevTools(),
   ],
+  base: '/fahaderp.com/',
   esbuild: {
     drop: mode === 'production' ? ['console', 'debugger'] : [],
   },

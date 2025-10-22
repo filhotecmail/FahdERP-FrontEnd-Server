@@ -1,0 +1,284 @@
+{
+  "templateName": "crud-management",
+  "description": "Template genérico para páginas de gerenciamento CRUD baseado no UserManagementView",
+  "version": "1.0.0",
+  "author": "Fahd ERP Team",
+  "parameters": {
+    "title": {
+      "type": "string",
+      "description": "Título principal da página",
+      "required": true,
+      "example": "Gerenciamento de Usuários"
+    },
+    "subtitle": {
+      "type": "string", 
+      "description": "Subtítulo descritivo da página",
+      "required": true,
+      "example": "Gerencie usuários, perfis de acesso e permissões do sistema"
+    },
+    "badgeText": {
+      "type": "string",
+      "description": "Texto do badge no cabeçalho",
+      "required": false,
+      "default": "Ativo",
+      "example": "Sistema Ativo"
+    },
+    "iconPath": {
+      "type": "string",
+      "description": "Path SVG do ícone principal",
+      "required": true,
+      "example": "M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"
+    },
+    "dataTitle": {
+      "type": "string",
+      "description": "Título da seção de dados",
+      "required": true,
+      "example": "dos Usuários"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "Nome da entidade no singular (minúsculo)",
+      "required": true,
+      "example": "usuário"
+    },
+    "dataDescription": {
+      "type": "string",
+      "description": "Descrição dos dados para estado vazio",
+      "required": true,
+      "example": "dos usuários"
+    },
+    "filterFields": {
+      "type": "array",
+      "description": "Campos de filtro da consulta",
+      "required": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do campo (camelCase)"
+          },
+          "label": {
+            "type": "string", 
+            "description": "Label exibido para o usuário"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["text", "email", "select", "date", "number"],
+            "description": "Tipo do campo de input"
+          },
+          "placeholder": {
+            "type": "string",
+            "description": "Placeholder do campo"
+          },
+          "options": {
+            "type": "array",
+            "description": "Opções para campos do tipo select",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {"type": "string"},
+                "label": {"type": "string"}
+              }
+            }
+          }
+        }
+      },
+      "example": [
+        {
+          "name": "nome",
+          "label": "Nome",
+          "type": "text",
+          "placeholder": "Digite o nome do usuário"
+        },
+        {
+          "name": "email", 
+          "label": "E-mail",
+          "type": "email",
+          "placeholder": "Digite o e-mail"
+        },
+        {
+          "name": "status",
+          "label": "Status",
+          "type": "select",
+          "placeholder": "Selecione o status",
+          "options": [
+            {"value": "ativo", "label": "Ativo"},
+            {"value": "inativo", "label": "Inativo"}
+          ]
+        }
+      ]
+    },
+    "statusFilters": {
+      "type": "array",
+      "description": "Filtros de status (radio buttons)",
+      "required": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {"type": "string"},
+          "label": {"type": "string"}
+        }
+      },
+      "example": [
+        {"value": "all", "label": "Todos os registros"},
+        {"value": "active", "label": "Registros ativos"},
+        {"value": "inactive", "label": "Registros inativos"},
+        {"value": "blocked", "label": "Registros bloqueados"}
+      ]
+    },
+    "tableColumns": {
+      "type": "array",
+      "description": "Colunas da tabela de dados",
+      "required": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {"type": "string"},
+          "label": {"type": "string"},
+          "sortable": {"type": "boolean", "default": false},
+          "width": {"type": "string", "description": "CSS width value"}
+        }
+      },
+      "example": [
+        {"key": "nome", "label": "Nome", "sortable": true},
+        {"key": "email", "label": "E-mail", "sortable": true},
+        {"key": "perfil", "label": "Perfil", "sortable": false},
+        {"key": "status", "label": "Status", "sortable": true},
+        {"key": "dataCadastro", "label": "Data Cadastro", "sortable": true},
+        {"key": "ultimoAcesso", "label": "Último Acesso", "sortable": true}
+      ]
+    },
+    "batchActions": {
+      "type": "array",
+      "description": "Ações em lote disponíveis",
+      "required": false,
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {"type": "string"},
+          "label": {"type": "string"},
+          "class": {"type": "string", "enum": ["btn-primary", "btn-secondary", "btn-danger"]},
+          "iconPath": {"type": "string"},
+          "disabled": {"type": "boolean", "default": false}
+        }
+      },
+      "example": [
+        {
+          "key": "activate",
+          "label": "Ativar Selecionados",
+          "class": "btn-primary",
+          "iconPath": "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"
+        },
+        {
+          "key": "deactivate",
+          "label": "Desativar Selecionados",
+          "class": "btn-secondary",
+          "iconPath": "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+        },
+        {
+          "key": "report",
+          "label": "Relatório de Usuários",
+          "class": "btn-secondary",
+          "iconPath": "M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
+        }
+      ]
+    }
+  },
+  "presets": {
+    "usuarios": {
+      "title": "Gerenciamento de Usuários",
+      "subtitle": "Gerencie usuários, perfis de acesso e permissões do sistema",
+      "badgeText": "Sistema Ativo",
+      "iconPath": "M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z",
+      "dataTitle": "dos Usuários",
+      "entityName": "usuário",
+      "dataDescription": "dos usuários",
+      "filterFields": [
+        {"name": "nome", "label": "Nome", "type": "text", "placeholder": "Digite o nome do usuário"},
+        {"name": "email", "label": "E-mail", "type": "email", "placeholder": "Digite o e-mail"},
+        {"name": "status", "label": "Status", "type": "select", "placeholder": "Selecione o status", "options": [{"value": "ativo", "label": "Ativo"}, {"value": "inativo", "label": "Inativo"}, {"value": "bloqueado", "label": "Bloqueado"}]},
+        {"name": "perfilAcesso", "label": "Perfil de Acesso", "type": "select", "placeholder": "Selecione o perfil", "options": [{"value": "admin", "label": "Administrador"}, {"value": "user", "label": "Usuário"}, {"value": "viewer", "label": "Visualizador"}]},
+        {"name": "dataInicio", "label": "Data Cadastro (Início)", "type": "date", "placeholder": ""},
+        {"name": "dataFim", "label": "Data Cadastro (Fim)", "type": "date", "placeholder": ""}
+      ],
+      "statusFilters": [
+        {"value": "all", "label": "Todos os registros"},
+        {"value": "active", "label": "Usuários ativos"},
+        {"value": "inactive", "label": "Usuários inativos"},
+        {"value": "blocked", "label": "Usuários bloqueados"}
+      ],
+      "tableColumns": [
+        {"key": "nome", "label": "Nome", "sortable": true},
+        {"key": "email", "label": "E-mail", "sortable": true},
+        {"key": "perfil", "label": "Perfil", "sortable": false},
+        {"key": "status", "label": "Status", "sortable": true},
+        {"key": "dataCadastro", "label": "Data Cadastro", "sortable": true},
+        {"key": "ultimoAcesso", "label": "Último Acesso", "sortable": true}
+      ],
+      "batchActions": [
+        {"key": "activate", "label": "Ativar Selecionados", "class": "btn-primary", "iconPath": "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"},
+        {"key": "deactivate", "label": "Desativar Selecionados", "class": "btn-secondary", "iconPath": "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"},
+        {"key": "report", "label": "Relatório de Usuários", "class": "btn-secondary", "iconPath": "M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"}
+      ]
+    },
+    "produtos": {
+      "title": "Gerenciamento de Produtos",
+      "subtitle": "Gerencie produtos, categorias e estoque do sistema",
+      "badgeText": "Catálogo Ativo",
+      "iconPath": "M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z",
+      "dataTitle": "dos Produtos",
+      "entityName": "produto",
+      "dataDescription": "dos produtos",
+      "filterFields": [
+        {"name": "nome", "label": "Nome", "type": "text", "placeholder": "Digite o nome do produto"},
+        {"name": "codigo", "label": "Código", "type": "text", "placeholder": "Digite o código"},
+        {"name": "categoria", "label": "Categoria", "type": "select", "placeholder": "Selecione a categoria", "options": [{"value": "eletronicos", "label": "Eletrônicos"}, {"value": "roupas", "label": "Roupas"}, {"value": "casa", "label": "Casa e Jardim"}]},
+        {"name": "status", "label": "Status", "type": "select", "placeholder": "Selecione o status", "options": [{"value": "ativo", "label": "Ativo"}, {"value": "inativo", "label": "Inativo"}, {"value": "descontinuado", "label": "Descontinuado"}]}
+      ],
+      "statusFilters": [
+        {"value": "all", "label": "Todos os produtos"},
+        {"value": "active", "label": "Produtos ativos"},
+        {"value": "inactive", "label": "Produtos inativos"},
+        {"value": "discontinued", "label": "Produtos descontinuados"}
+      ],
+      "tableColumns": [
+        {"key": "codigo", "label": "Código", "sortable": true},
+        {"key": "nome", "label": "Nome", "sortable": true},
+        {"key": "categoria", "label": "Categoria", "sortable": true},
+        {"key": "preco", "label": "Preço", "sortable": true},
+        {"key": "estoque", "label": "Estoque", "sortable": true},
+        {"key": "status", "label": "Status", "sortable": true}
+      ],
+      "batchActions": [
+        {"key": "activate", "label": "Ativar Selecionados", "class": "btn-primary", "iconPath": "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"},
+        {"key": "updatePrices", "label": "Atualizar Preços", "class": "btn-secondary", "iconPath": "M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"}
+      ]
+    }
+  },
+  "usage": {
+    "description": "Como usar este template",
+    "steps": [
+      "1. Copie o arquivo crud-management.vue.template para seu diretório de views",
+      "2. Renomeie o arquivo para o nome desejado (ex: ProductManagementView.vue)",
+      "3. Substitua os placeholders {{}} pelos valores específicos do seu módulo",
+      "4. Use os presets disponíveis ou configure manualmente os parâmetros",
+      "5. Ajuste os estilos conforme necessário para seu módulo específico"
+    ],
+    "placeholders": {
+      "{{title}}": "Título principal da página",
+      "{{subtitle}}": "Subtítulo descritivo",
+      "{{badgeText}}": "Texto do badge",
+      "{{iconPath}}": "Path SVG do ícone",
+      "{{dataTitle}}": "Título da seção de dados",
+      "{{entityName}}": "Nome da entidade",
+      "{{dataDescription}}": "Descrição dos dados",
+      "{{#each filterFields}}": "Loop dos campos de filtro",
+      "{{#each statusFilters}}": "Loop dos filtros de status",
+      "{{#each tableColumns}}": "Loop das colunas da tabela",
+      "{{#each batchActions}}": "Loop das ações em lote",
+      "{{tableColumnsCount}}": "Número total de colunas + 2 (checkbox + ações)"
+    }
+  }
+}

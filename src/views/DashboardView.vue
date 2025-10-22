@@ -30,7 +30,7 @@
           <h1 class="brand-title">Fahd ERP</h1>
         </div>
       </div>
-      
+
       <div class="navbar-center">
         <div class="search-box">
           <input type="text" placeholder="Buscar..." v-model="searchQuery">
@@ -41,7 +41,7 @@
           </button>
         </div>
       </div>
-      
+
       <div class="navbar-right">
         <WeatherWidget />
         <ThemeSelector />
@@ -53,12 +53,12 @@
     <!-- Barra de Abas -->
     <div class="tabs-bar" v-if="tabCache.tabs.value.length > 0">
       <div class="tabs-container">
-        <div 
-          v-for="(tab, index) in tabCache.tabs.value" 
+        <div
+          v-for="(tab, index) in tabCache.tabs.value"
           :key="tab.id"
           class="tab-item"
-          :class="{ 
-            active: tabCache.activeTabId.value === tab.id, 
+          :class="{
+            active: tabCache.activeTabId.value === tab.id,
             dragging: draggedTab === tab.id,
             'drag-over': dragOverIndex === index
           }"
@@ -75,7 +75,7 @@
           <div class="tab-actions">
             <!-- Menu Dropdown -->
             <div class="tab-menu-container" v-if="tab.closable" @dragstart.stop.prevent @mousedown.stop>
-              <button 
+              <button
                 @click.stop="toggleTabMenu(tab.id, $event)"
                 @mousedown.stop
                 @dragstart.stop.prevent
@@ -86,14 +86,14 @@
                   <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z"/>
                 </svg>
               </button>
-              
+
               <!-- Dropdown Menu -->
-              <div 
+              <div
                 v-if="activeTabMenu === tab.id"
                 class="tab-dropdown-menu"
                 @click.stop
               >
-                <button 
+                <button
                   @click="closeTabFromMenu(tab.id)"
                   class="tab-dropdown-item"
                 >
@@ -104,9 +104,9 @@
                 </button>
               </div>
             </div>
-            
+
             <!-- Botão de fechar tradicional (mantido como fallback) -->
-            <button 
+            <button
               v-if="tab.closable"
               @click.stop="closeTab(tab.id)"
               class="tab-close-btn"
@@ -130,7 +130,7 @@
           <div class="sidebar-header">
             <h3 title="Lista de módulos disponíveis">Módulos ERP</h3>
           </div>
-          
+
           <nav class="sidebar-nav">
             <!-- Dashboard -->
             <div class="nav-item" :class="{ active: activeModule === 'dashboard' }" @click="setActiveModule('dashboard')">
@@ -366,7 +366,7 @@
                     </svg>
                     <span>S-1000 - Empregador</span>
                   </div>
-                  
+
                   <!-- Processamento da informação -->
                   <div class="nav-subitem group-header" @click="toggleGroup('esocial-processing')" title="Processamento da informação">
                     <svg class="nav-subicon" viewBox="0 0 24 24">
@@ -385,7 +385,7 @@
                       <span>Processamento e Envio</span>
                     </div>
                   </div>
-                  
+
                   <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('esocial-s2200')" title="S-2200 - Cadastramento Inicial do Vínculo e Admissão de Trabalhador">
                     <svg class="nav-subicon" viewBox="0 0 24 24">
                       <path d="M16,4C18.21,4 20,5.79 20,8C20,10.21 18.21,12 16,12C13.79,12 12,10.21 12,8C12,5.79 13.79,4 16,4M16,14C18.67,14 24,15.33 24,18V20H8V18C8,15.33 13.33,14 16,14M8,4C10.21,4 12,5.79 12,8C12,10.21 10.21,12 8,12C5.79,12 4,10.21 4,8C4,5.79 5.79,4 8,4M8,14C10.67,14 16,15.33 16,18V20H0V18C0,15.33 5.33,14 8,14Z"/>
@@ -440,6 +440,49 @@
                 </div>
               </div>
             </div>
+
+            <!-- Módulo Usuários -->
+            <div class="nav-group">
+              <div class="nav-item group-header" @click="toggleGroup('usuarios')" title="Módulo de Usuários">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                  <path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"/>
+                </svg>
+                <span>Usuários</span>
+                <svg class="expand-icon" :class="{ expanded: expandedGroups.usuarios }" viewBox="0 0 24 24">
+                  <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
+                </svg>
+              </div>
+              <div class="nav-submenu" v-show="expandedGroups.usuarios">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('gerenciamento-usuarios')" title="Gerenciar usuários do sistema">
+                  <svg class="nav-subicon" viewBox="0 0 24 24">
+                    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                  </svg>
+                  <span>Gerenciamento de Usuários</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Módulo Templates -->
+            <div class="nav-group">
+              <div class="nav-item group-header" @click="toggleGroup('templates')" title="Módulo de Templates">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+                <span>Templates</span>
+                <svg class="expand-icon" :class="{ expanded: expandedGroups.templates }" viewBox="0 0 24 24">
+                  <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
+                </svg>
+              </div>
+              <div class="nav-submenu" v-show="expandedGroups.templates">
+                <div class="nav-subitem" @click="expandSidebarIfNeeded(); setActiveModule('gerenciamento-template')" title="Gerenciar templates do sistema">
+                  <svg class="nav-subicon" viewBox="0 0 24 24">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                  </svg>
+                  <span>Gerenciamento de Templates</span>
+                </div>
+              </div>
+            </div>
+
           </nav>
         </div>
       </aside>
@@ -448,11 +491,11 @@
       <main class="main-content">
           <!-- Conteúdo da Aba Ativa com Cache -->
           <div class="module-content" v-if="tabCache.tabs.value.length > 0">
-            <component 
+            <component
               :is="tabCache.activeTabComponent.value"
               v-if="tabCache.activeTabComponent.value"
             />
-            
+
             <!-- Placeholder para módulos não implementados -->
             <div v-else-if="tabCache.activeTab.value">
               <div class="module-header">
@@ -469,7 +512,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Estado inicial - sem abas abertas -->
           <div class="welcome-state" v-else>
             <div class="welcome-content">
@@ -545,10 +588,10 @@ const registerModuleComponents = async () => {
       for (const [name, componentFactory] of Object.entries(module.components)) {
         try {
           // Resolver componente lazy loading
-          const component = typeof componentFactory === 'function' 
+          const component = typeof componentFactory === 'function'
             ? await componentFactory()
             : componentFactory
-          
+
           // Registrar o componente resolvido
           tabCache.registerTabComponent(name, component.default || component)
         } catch (error) {
@@ -570,7 +613,9 @@ const expandedGroups = reactive({
   rh: false,
   esocial: false,
   'esocial-processing': false,
-  industria: false
+  industria: false,
+  usuarios: false,
+  templates: false
 })
 
 // Métricas e dados removidos - não utilizados
@@ -581,7 +626,7 @@ const expandedGroups = reactive({
 const toggleSidebar = () => {
   try {
     sidebarOpen.value = !sidebarOpen.value
-    
+
     // Fechar todos os submenus quando o sidebar for recolhido
     if (!sidebarOpen.value && expandedGroups) {
       Object.keys(expandedGroups).forEach(key => {
@@ -616,10 +661,10 @@ const setActiveModule = async (module: string) => {
     if (!sidebarOpen.value) {
       sidebarOpen.value = true
     }
-    
+
     // Verificar se já existe uma aba para este módulo
     const existingTab = tabCache.tabs.value.find(tab => tab.component === module || tab.id === module)
-    
+
     if (existingTab) {
       // Se a aba já existe, apenas ativar ela e recolher a sidebar
       tabCache.switchToTab(existingTab.id)
@@ -630,25 +675,25 @@ const setActiveModule = async (module: string) => {
       // Buscar componente no sistema de módulos
       const modules = moduleSystem.getAllModules()
       let moduleComponent = null
-      
+
       for (const moduleObj of modules) {
         if (moduleObj.components && moduleObj.components[module]) {
           moduleComponent = moduleObj.components[module]
           break
         }
       }
-      
+
       // Se encontrou o componente do módulo, registrar e criar aba
       if (moduleComponent) {
         try {
           // Resolver componente lazy loading
-          const component = typeof moduleComponent === 'function' 
+          const component = typeof moduleComponent === 'function'
             ? await moduleComponent()
             : moduleComponent
-          
+
           // Registrar o componente resolvido
           tabCache.registerTabComponent(module, component.default || component)
-          
+
           // Criar nova aba com o componente do módulo
           const tabTitle = getModuleTitle(module)
           await tabCache.addTab({
@@ -688,7 +733,7 @@ const setActiveModule = async (module: string) => {
         sidebarOpen.value = false
       }
     }
-    
+
     // Manter comportamento para mobile
     if (window.innerWidth <= 768) {
       sidebarOpen.value = false
@@ -705,7 +750,7 @@ const setActiveModule = async (module: string) => {
 const closeTab = (tabId: string) => {
   const tab = tabCache.tabs.value.find(t => t.id === tabId)
   if (!tab || !tab.closable) return
-  
+
   // Atualizar activeModule se necessário
   if (tabCache.activeTabId.value === tabId) {
     const remainingTabs = tabCache.tabs.value.filter(t => t.id !== tabId)
@@ -713,7 +758,7 @@ const closeTab = (tabId: string) => {
       activeModule.value = remainingTabs[0].component === 'dashboard' ? 'dashboard' : remainingTabs[0].id
     }
   }
-  
+
   tabCache.closeTab(tabId)
 }
 
@@ -728,7 +773,7 @@ const switchTab = (tabId: string) => {
 const toggleTabMenu = (tabId: string, event: Event) => {
   event.preventDefault()
   event.stopPropagation()
-  
+
   // Alternar o estado do menu imediatamente
   if (activeTabMenu.value === tabId) {
     activeTabMenu.value = null
@@ -768,14 +813,14 @@ const handleDragLeave = () => {
 
 const handleDrop = (targetIndex: number, event: DragEvent) => {
   event.preventDefault()
-  
+
   if (!draggedTab.value) return
-  
+
   const tabs = tabCache.tabs.value
   const draggedIndex = tabs.findIndex(tab => tab.id === draggedTab.value)
-  
+
   if (draggedIndex === -1 || draggedIndex === targetIndex) return
-  
+
   // Reordenar as abas usando a função do composable
   tabCache.reorderTabs(draggedIndex, targetIndex)
 }
@@ -822,14 +867,18 @@ const getModuleTitle = (module: string) => {
     'esocial-s1000': 'S-1000 - Empregador',
     'esocial-processing': 'Processamento da informação',
     'esocial-s2200': 'S-2200 - Admissão',
-    'esocial-s2300': 'S-2300 - Trabalhador sem vínculo'
+    'esocial-s2300': 'S-2300 - Trabalhador sem vínculo',
+    // Módulo de Usuários
+    'gerenciamento-usuarios': 'Gerenciamento de Usuários',
+    // Módulo de Templates
+    'gerenciamento-template': 'Gerenciamento de Templates'
   }
-  
+
   // Verificar títulos estáticos primeiro
   if (staticTitles[module]) {
     return staticTitles[module]
   }
-  
+
   // Buscar título no sistema de módulos
   const modules = moduleSystem.getAllModules()
   for (const moduleObj of modules) {
@@ -841,7 +890,7 @@ const getModuleTitle = (module: string) => {
       }
     }
   }
-  
+
   return 'Módulo'
 }
 
@@ -849,14 +898,14 @@ const getModuleTitle = (module: string) => {
 
 // const logout = async () => {
 //   const { SwalCustom } = await import('../plugins/sweetalert')
-//   
+//
 //   const result = await SwalCustom.confirm(
 //     'Sair da Aplicação',
 //     'Tem certeza que deseja sair do sistema?',
 //     'Sim, sair',
 //     'Cancelar'
 //   )
-//   
+//
 //   if (result.isConfirmed) {
 //     router.push('/login')
 //   }
@@ -866,33 +915,33 @@ const getModuleTitle = (module: string) => {
 onMounted(async () => {
   // Registrar componentes dos módulos primeiro
   await registerModuleComponents()
-  
+
   // Inicializar tema
   themeStore.initTheme()
-  
+
   // Dashboard não será mais carregado automaticamente
   // O usuário deve clicar em "Dashboard Vendas" no menu CRM/Vendas para visualizar
-  
+
   document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement
     const sidebar = document.querySelector('.sidebar')
     const hamburger = document.querySelector('.hamburger-btn')
-    
+
     // Fechar sidebar ao clicar fora
     if (sidebarOpen.value && sidebar && !sidebar.contains(target) && !hamburger?.contains(target)) {
       sidebarOpen.value = false
     }
-    
+
     // Fechar menu dropdown das abas ao clicar fora
     // Verificar se o clique foi em um botão de menu ou dentro do container
     const clickedMenuButton = target.closest('.tab-menu-btn')
     const clickedMenuContainer = target.closest('.tab-menu-container')
-    
+
     // Se clicou no botão do menu, não fechar (deixar o toggleTabMenu lidar com isso)
     if (clickedMenuButton) {
       return
     }
-    
+
     // Se clicou fora de qualquer container de menu, fechar o dropdown
     if (!clickedMenuContainer && activeTabMenu.value) {
       activeTabMenu.value = null
@@ -1780,53 +1829,53 @@ onMounted(async () => {
   .navbar-center {
     display: none;
   }
-  
+
   .user-name {
     display: none;
   }
-  
+
   .main-content {
     padding: 1rem;
   }
-  
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .metrics-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
   }
-  
+
   .widgets-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .widget-container {
     min-height: 350px;
   }
-  
+
   /* Abas responsivas */
   .tabs-bar {
     padding: 0 0.5rem;
   }
-  
+
   .tab-item {
     min-width: 100px;
     padding: 0.5rem 0.75rem;
     font-size: 0.8rem;
   }
-  
+
   .tab-close-btn {
     width: 16px;
     height: 16px;
   }
-  
+
   .tab-close-btn svg {
     width: 10px;
     height: 10px;
@@ -1935,20 +1984,20 @@ onMounted(async () => {
   .welcome-content {
     padding: 2rem 1.5rem;
   }
-  
+
   .welcome-content h2 {
     font-size: 1.5rem;
   }
-  
+
   .welcome-content > p {
     font-size: 1rem;
   }
-  
+
   .welcome-icon {
     width: 60px;
     height: 60px;
   }
-  
+
   .welcome-icon svg {
     width: 30px;
     height: 30px;
@@ -1959,15 +2008,15 @@ onMounted(async () => {
   .top-navbar {
     padding: 0 0.5rem;
   }
-  
+
   .brand-title {
     font-size: 1.2rem;
   }
-  
+
   .main-content {
     padding: 0.5rem;
   }
-  
+
   .metric-card {
     flex-direction: column;
     text-align: center;

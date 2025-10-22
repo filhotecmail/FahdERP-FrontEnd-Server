@@ -1,5 +1,6 @@
 import './assets/main.css'
 import './assets/toast-custom.css'
+import './modules/modules-global.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -14,6 +15,8 @@ import { FormStatePlugin } from './plugins/formStatePlugin'
 import { addToGlobalConsole } from './utils/debugFormState'
 import { ModuleSystemPlugin, moduleSystem } from './modules/core/moduleSystem.js'
 import esocialModule from './modules/esocial/index.js'
+import usuariosModule from './modules/usuarios/index.js'
+import templateModule from './modules/template/index.js'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -22,6 +25,8 @@ app.use(pinia)
 
 // Registrar módulos antes do router
 moduleSystem.registerModule(esocialModule)
+moduleSystem.registerModule(usuariosModule)
+moduleSystem.registerModule(templateModule)
 
 // Configurar sistema de módulos
 app.use(ModuleSystemPlugin, { router })

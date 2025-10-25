@@ -121,7 +121,10 @@ export const useThemeStore = defineStore('theme', () => {
   const applyTheme = () => {
     const root = document.documentElement
     const themeVars = themes[currentTheme.value]
-    
+
+    // Setar atributo para seletores baseados em data-theme (dark/dracula)
+    root.setAttribute('data-theme', currentTheme.value)
+
     Object.entries(themeVars).forEach(([property, value]) => {
       root.style.setProperty(property, value)
     })

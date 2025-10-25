@@ -134,23 +134,24 @@
 
 .form-label {
   font-weight: 600;
-  color: #374151;
+  color: var(--text-secondary, #374151);
   font-size: 0.875rem;
 }
 
 .form-input {
   padding: 0.75rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   font-size: 0.875rem;
   transition: border-color 0.2s, box-shadow 0.2s;
-  background: white;
+  background: var(--input-bg, #ffffff);
+  color: var(--text-primary, #1f2937);
 }
 
 .form-input:focus {
- outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  outline: none;
+  border-color: var(--accent-primary, #10b981);
+  box-shadow: 0 0 0 3px var(--accent-glow, rgba(16, 185, 129, 0.1));
 }
 
 .form-input.small {
@@ -182,7 +183,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, var(--accent-primary, #10b981) 0%, var(--accent-secondary, #3b82f6) 100%);
   color: white;
 }
 
@@ -192,13 +193,13 @@
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  background: var(--bg-tertiary, #f3f4f6);
+  color: var(--text-primary, #374151);
+  border: 2px solid var(--border-color, #e5e7eb);
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: var(--hover-bg, #e5e7eb);
   transform: translateY(-1px);
 }
 
@@ -235,7 +236,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary, #6b7280);
 }
 
 .select-placeholder {
@@ -448,7 +449,7 @@
 }
 
 .data-table tbody tr:hover {
-  background-color: rgba(59, 130, 246, 0.08);
+  background-color: var(--hover-bg, rgba(59, 130, 246, 0.08));
 }
 
 .data-table tbody tr:hover td {
@@ -469,16 +470,16 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  border: 2px solid #e5e7eb;
-  background: #f9fafb;
-  color: #374151;
+  border: 2px solid var(--border-color, #e5e7eb);
+  background: var(--bg-tertiary, #f9fafb);
+  color: var(--text-primary, #374151);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-  background: #eef2ff;
-  border-color: #c7d2fe;
+  background: var(--hover-bg, #eef2ff);
+  border-color: var(--border-color, #c7d2fe);
   transform: translateY(-1px);
 }
 
@@ -497,4 +498,43 @@
   width: 18px;
   height: 18px;
   fill: currentColor;
+}
+
+/* Dark & Dracula specific adjustments */
+[data-theme="dark"] .form-input,
+[data-theme="dracula"] .form-input {
+  border-color: var(--border-color, #333333);
+}
+
+[data-theme="dark"] .btn-secondary,
+[data-theme="dracula"] .btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .select-placeholder,
+[data-theme="dracula"] .select-placeholder,
+[data-theme="dark"] .search-placeholder,
+[data-theme="dracula"] .search-placeholder {
+  background: var(--input-bg);
+  color: var(--text-muted);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .data-table th,
+[data-theme="dracula"] .data-table th {
+  background: var(--bg-primary);
+}
+
+[data-theme="dark"] .data-table,
+[data-theme="dracula"] .data-table {
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .icon-btn,
+[data-theme="dracula"] .icon-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
